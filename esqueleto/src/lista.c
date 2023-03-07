@@ -8,7 +8,8 @@ int tamaño = 0;
 
 /*
  * Para crear la lista, le pasamos el puntero con el nombre de la lista (pLista) y un valor entero
- * como contenido. En principio, se crea una lista con un único nodo (y su entero), que será EL PRIMERO.
+ * como contenido. En principio, se crea una lista con un único nodo (y su entero), que será EL PRIMERO y EL ÚLTIMO
+ * (hasta que se introduzcan nodos nuevos o se destruya la lista).
  * Por eso su asignación dinámica en memoria es coon el tamaño del nodo 'TNodo'.
  * Aqui guardaremos el valor entero y un siguiente nodo apuntando a NULL (hasta que se agregue otro elemento).
  */
@@ -47,8 +48,14 @@ void destruir(TLista *pLista)
 
 // Inserta al principio/inicio de la lista.
 /*
-TODO COMENTARIO TO GUAPO AHI A LO GUAY
-*/
+ * Para insertar un elemento a la pila le vamos a pasar el puntero con el nombre de la pila y
+ * un entero que contiene el valor a insertar. Se crea un puntero de tipo TNodo al que se le
+ * va a asignar un espacio de memoria equivalente al tamaño de TNodo. Una vez creado le vamos a
+ * dar el valor introducido y le vamos a asignar como siguiente elemento, es decir, el elemento
+ * de la lista que va despúes de él, el primer elemento de la lista
+ * pLista->pPrimero ES EL PRIMER ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = HEAD O CABEZA
+ * pLista->pUltimo ES EL ULTIMO ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = TAIL O COLA
+ */
 void insertar(TLista *pLista, int valor)
 {
   TNodo *nuevo = malloc(sizeof(TNodo));
@@ -59,7 +66,7 @@ void insertar(TLista *pLista, int valor)
 }
 
 // Inserta al final de la lista.
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
+// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 
 void insertarFinal(TLista *pLista, int valor)
 {
@@ -74,6 +81,19 @@ void insertarFinal(TLista *pLista, int valor)
 // Suponemos n = 1, 2, ...
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
+/*
+ * Para insertar un valor cualquiera en una posición N de la lista, presuponemos que se inserta detrás de dicha posición N.
+ * Lo primero que haremos será controlar el valor de índice que se le pasa a la función, siendo incorrectos los valores nulos
+ * o aquellos que sobrepasen el valor del último índice de la lista (= tamaño - 1).
+ *
+ * Una vez tenemos un índice válido, declaramos un nodo de inserción al que le hacemos una asignación en memoria con el
+ * tamaño de un nodo. Despúes, discriminamos si el índice es 0 o >=1:
+ *     - Para index = 0 procedemos similar al método insertar()
+ *     - Para index >= 1, nos vamos a apoyar en otro nodo auxiliar que hemos denominado como iterativo, ya que irá avanzando las
+ *       posiciones de la lista ("nodo iterativo = su siguiente nodo"). Una vez el iterador se ha colocado en la posición 'index',
+ *       clonamos la información del nodo iterativo en el de inserción, ya que el nodo iterativo con posición 'n' es equivalente
+ *       a tener el elemento 'n' de la lista enlazada.
+ */
 
 void insertarN(TLista *pLista, int index, int valor)
 {
@@ -85,62 +105,60 @@ void insertarN(TLista *pLista, int index, int valor)
   }
   else
   {
-    TNodo *aux = malloc(sizeof(TNodo));
+    TNodo *insercion = malloc(sizeof(TNodo));
     if (index == 0)
     {
-      aux->valor = valor;
-      aux->pSiguiente = pLista->pPrimero;
-      pLista->pPrimero = aux;
+      insercion->valor = valor;
+      insercion->pSiguiente = pLista->pPrimero;
+      pLista->pPrimero = insercion;
     }
     else
     {
       TNodo *nodoiterativo = malloc(sizeof(TNodo));
-      TNodo *aux2 = malloc(sizeof(TNodo));
       nodoiterativo = pLista->pPrimero;
 
       for (int i = 1; i <= index; i++)
       {
         nodoiterativo = nodoiterativo->pSiguiente;
       }
-      aux2->valor = nodoiterativo->valor;
-      aux2->pSiguiente = nodoiterativo->pSiguiente;
-
-      nodoiterativo->pSiguiente = aux2;
+      insercion->valor = nodoiterativo->valor;
+      insercion->pSiguiente = nodoiterativo->pSiguiente;
+      nodoiterativo->pSiguiente = insercion;
       nodoiterativo->valor = valor;
     }
   }
   tamaño++;
 }
 
-//  Elimina el primer elemento de la lista.
+//  Elimina el prime  r elemento de la lista.
 //! AHORA MISMO ELIMINA EL ULTIMO.
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
+// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 void eliminar(TLista *pLista)
 {
-  /*BORRA EL PRIMERO*/
+  //!BORRA EL PRIMERO
 
   // TNodo *elim = pLista->pPrimero;
   // pLista->pPrimero = pLista->pPrimero->pSiguiente;
   // free(elim);
   // tamaño--;
 
-  /*BORRA EL ÚLTIMO*/
+  //!BORRA EL ÚLTIMO
 
   if (tamaño == 1)
   {
-    //free(pLista->pPrimero);
-    //pLista->pPrimero = NULL;
-    //pLista->pUltimo = NULL;
+    // free(pLista->pPrimero);
+    // pLista->pPrimero = NULL;
+    // pLista->pUltimo = NULL;
     destruir(pLista);
   }
   else
   {
     TNodo *pElim;
-    for (pElim = pLista->pPrimero; pElim->pSiguiente->pSiguiente != NULL; pElim = pElim->pSiguiente)
+    for (pElim = pLista->pPrimero; pElim->pSiguiente != pLista->pUltimo; pElim = pElim->pSiguiente)
       ;
     pLista->pUltimo = pElim;
-    free(pElim->pSiguiente);
     pElim->pSiguiente = NULL;
+    free(pElim->pSiguiente);
     tamaño--;
   }
 }
@@ -155,21 +173,22 @@ void eliminarN(TLista *pLista, int index)
   }
   else
   {
-    TNodo *aux = pLista->pPrimero;
+    TNodo *borrar = NULL;
+
     if (index == 0)
     {
+      borrar = pLista->pPrimero;
       pLista->pPrimero = pLista->pPrimero->pSiguiente;
-      free(aux);
+      free(borrar);
     }
     else
     {
       TNodo *nodoiterativo = pLista->pPrimero;
-      TNodo *borrar = NULL;
       for (int i = 1; i < index; i++)
       {
         if (nodoiterativo->pSiguiente == NULL)
         {
-          printf("Roto\n");
+          printf("Roto al intentar eliminar el supuesto elemento %d\n",index);
           exit(-1);
         }
         nodoiterativo = nodoiterativo->pSiguiente;
@@ -179,6 +198,10 @@ void eliminarN(TLista *pLista, int index)
       if (borrar->pSiguiente == NULL)
       { // este es el ultimo elemento
         pLista->pUltimo = nodoiterativo;
+      }
+      else
+      {
+        borrar->pSiguiente = NULL;
       }
       free(borrar);
     }
@@ -200,7 +223,14 @@ int getElementoN(TLista *pLista, int index)
   return aux->valor;
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
+// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
+/*
+ * Para imprimir los elementos de la lista le pasamos el puntero con el nombre de la lista
+ * y mediante un bucle for se va imprimiendo el valor contenido en cada posición de la lista,
+ * desde la primera hasta la última. Esto se logra gracias a un nodo iterador, que se inicializa
+ * en la primera posición y va iterando a su siguiente elemento (a través de pSiguiente) hasta
+ * que el último elemento sea NULL (fin de la lista).
+ */
 void imprimir(TLista *pLista)
 {
   for (TNodo *pIterador = pLista->pPrimero; pIterador != NULL; pIterador = pIterador->pSiguiente)
@@ -208,7 +238,7 @@ void imprimir(TLista *pLista)
   printf("\n");
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
+// TODO COMENTARIO TO GUAPO AHI A LO GUAY -PABLO
 int longitud(TLista *pLista)
 {
   return tamaño;
