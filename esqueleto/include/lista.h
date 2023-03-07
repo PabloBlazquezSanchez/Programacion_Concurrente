@@ -17,6 +17,7 @@ typedef struct
   TNodo *pUltimo;
 } TLista;
 
+//Hola
 void crear(TLista *pLista, int valor);
 void destruir(TLista *pLista);
 

@@ -5,7 +5,7 @@
 int main(int argc, char *argv[])
 {
 
-  /*CREO LA LISTA*/
+  /*CREO LA LISTA - */
   TLista *pLista;
 
   pLista = malloc(sizeof(TLista));

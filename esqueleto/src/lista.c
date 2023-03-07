@@ -10,7 +10,7 @@ int tamaño = 0;
  * Para crear la lista, le pasamos el puntero con el nombre de la lista (pLista) y un valor entero
  * como contenido. En principio, se crea una lista con un único nodo (y su entero), que será EL PRIMERO y EL ÚLTIMO
  * (hasta que se introduzcan nodos nuevos o se destruya la lista).
- * Por eso su asignación dinámica en memoria es coon el tamaño del nodo 'TNodo'.
+ * Por eso su asignación dinámica en memoria es coon el tamaño del nodo 'TNodo'. -
  * Aqui guardaremos el valor entero y un siguiente nodo apuntando a NULL (hasta que se agregue otro elemento).
  */
 
