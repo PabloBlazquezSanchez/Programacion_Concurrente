@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <definitions.h>
+#include <lista.h>
 
 void procesar_argumentos(int argc, char *argv[], char **filename, char **pattern, int *lines);
 void instalar_manejador_senhal();
@@ -123,6 +124,7 @@ void procesar_linea(char *linea)
     insertarFinal(patrones, token);
     token = strtok(NULL, " ");
   }
+  // imprimir(patrones);
 }
 
 void iniciar_tabla_procesos(int n_procesos_contador, int n_procesos_procesador)
@@ -139,7 +141,7 @@ void iniciar_tabla_procesos(int n_procesos_contador, int n_procesos_procesador)
 void crear_procesos(const char *nombre_fichero)
 {
   FILE *fp;
-  char linea[PATH_MAX], numero_linea_str[3];
+  char linea[PATH_MAX], numero_linea_str[/*3*/11];
   int indice_tabla = 0;
   
   if ((fp = fopen(nombre_fichero, "r")) == NULL)
@@ -156,7 +158,7 @@ void crear_procesos(const char *nombre_fichero)
     indice_tabla++;
   }
 
-  for (int i = 2; i <= longitud(patrones); i++)
+  for (int i = 1; i < longitud(patrones); i++)
   {
     lanzar_proceso_procesador(indice_tabla, getElementoN(patrones, i), nombre_fichero);
     indice_tabla++;
