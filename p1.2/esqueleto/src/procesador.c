@@ -10,11 +10,6 @@ int main(int argc, char *argv[])
 {
   // TODO
   // printf("\n<<%s>> , <<%s>>\n", argv[1], argv[2]);
-  if (argc!= 3)
-  {
-    printf("Error en el numero de argumentos\n");
-    return EXIT_FAILURE;
-  }
   
   FILE *fdproces = fopen(argv[1], "r"); // abrir en solo lectura
   char *patron = argv[2];
