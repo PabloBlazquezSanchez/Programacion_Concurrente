@@ -9,6 +9,13 @@ void contar(char *line, int line_number);
 int main(int argc, char *argv[])
 {
   // TODO
+  if (argc!=3)
+  {
+    printf("Error en el número de argumentos\n");
+    return EXIT_FAILURE;
+  }
+  contar(argv[1], atoi(argv[2])); //atoi == cast() de java
+  
   return EXIT_SUCCESS;
 }
 
