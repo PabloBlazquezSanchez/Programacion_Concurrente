@@ -26,7 +26,7 @@ void liberar_recursos();
 int g_nProcesses;
 struct TProcess_t *g_process_table;
 TLista *patrones;
-
+//!COMENTAR RAÚL
 int main(int argc, char *argv[])
 {
   char *nombre_fichero = NULL, *fichero_patrones = NULL;

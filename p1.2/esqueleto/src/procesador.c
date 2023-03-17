@@ -9,6 +9,7 @@ void comparar(char *buf, char *pat, int l);
 int main(int argc, char *argv[])
 {
   // TODO
+  //!COMENTAR RAÚL
   // printf("\n<<%s>> , <<%s>>\n", argv[1], argv[2]);
   
   FILE *fdproces = fopen(argv[1], "r"); // abrir en solo lectura

@@ -4,6 +4,7 @@
 #include <string.h>
 
 // Crea una lista con un nodo.
+//!RESUMIR Y TERMINAR DE COMENTAR PABLO
 
 /*
  * Para crear la lista, le pasamos el puntero con el nombre de la lista (pLista) y un valor entero

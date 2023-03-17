@@ -4,6 +4,8 @@
 
 void contar(char *line, int line_number);
 
+//!COMENTAR PABLO
+
 //! execl(RUTA_CONTADOR, CLASE_CONTADOR, linea, numero_linea_str, NULL)
 //!   argv      X             0           1           2           NULL
 int main(int argc, char *argv[])
