@@ -4,7 +4,7 @@
 //* Definición de una estructura con sinónimo: definimos la estructura Nodo (contenido + puntero a siguiente nodo)
 typedef struct Nodo
 {
-  char *valor;
+  int valor;
   struct Nodo *pSiguiente;
 } TNodo; //! La estructura Nodo también se puede definir como TNodo
 
@@ -17,19 +17,19 @@ typedef struct
   TNodo *pUltimo;
 } TLista;
 
-void crear(TLista *pLista, char *valor);
+void crear(TLista *pLista, int valor);
 void destruir(TLista *pLista);
 
 // 'insertar' inserta al ppio de la lista.
-void insertar(TLista *pLista, char *valor);
-void insertarFinal(TLista *pLista, char *valor);
-void insertarN(TLista *pLista, int index, char *valor);
+void insertar(TLista *pLista, int valor);
+void insertarFinal(TLista *pLista, int valor);
+void insertarN(TLista *pLista, int index, int valor);
 
 // 'elimina' elimina el último de la lista.
 void eliminar(TLista *pLista);
 void eliminarN(TLista *pLista, int index);
 
-char *getElementoN(TLista *pLista, int index);
+int getElementoN(TLista *pLista, int index);
 
 void imprimir(TLista *pLista);
 int longitud(TLista *pLista);

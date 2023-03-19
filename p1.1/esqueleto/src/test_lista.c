@@ -10,56 +10,59 @@ int main(int argc, char *argv[])
 
   pLista = malloc(sizeof(TLista));
 
-  crear(pLista, 100);
+  crear(pLista, "100");
 
   /*AÑADO ELEMENTOS A LA LISTA*/
-  insertar(pLista, 50);
-  insertarFinal(pLista, 200);
+  insertar(pLista, "50");
+  insertarFinal(pLista, "200");
+
+  insertarN(pLista, 0, "1");
+  insertarN(pLista, 2, "150");
+  insertarFinal(pLista, "250");
 
   imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
-
-  insertarN(pLista, 0, 0);
-  insertarN(pLista, 2, 150);
-  insertarFinal(pLista, 250);
-
-  imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
+  printf("1// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
 
   /*SE LOS QUITO*/
   eliminar(pLista);
 
   imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
+  printf("2// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
 
   eliminarN(pLista, 2);
 
   imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
+  printf("3// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
 
   eliminar(pLista);
   eliminar(pLista);
   eliminar(pLista);
 
   imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
+  printf("4// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
 
-  for (int i = 50; i <= 300; i += 50)
-  {
-    insertarFinal(pLista, i);
-  }
+  insertarFinal(pLista, "1000");
+  insertarFinal(pLista, "2000");
+  insertarFinal(pLista, "3000");
+  insertarFinal(pLista, "4000");
+  insertarFinal(pLista, "5000");
+  insertarFinal(pLista, "6000");
+  insertarFinal(pLista, "7000");
+
   eliminarN(pLista, 6);
-
   imprimir(pLista);
-  printf("%d---%d , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
+  printf("5// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
 
+  eliminarN(pLista, 0);
+  imprimir(pLista);
+  printf("6// %s---%s , %d\n\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
   /*OBTENGO SUS ELEMENTOS*/
-  printf("(%d) ", getElementoN(pLista, 0));
-  printf("(%d) ", getElementoN(pLista, 2));
-  printf("(%d) ", getElementoN(pLista, 3));
+  printf("(%s) ", getElementoN(pLista, 0));
+  printf("(%s) ", getElementoN(pLista, 2));
+  printf("(%s) ", getElementoN(pLista, 3));
 
   /*BORRO LA LISTA*/
-  destruir(pLista); //Lo que va después si se ejecuta ocasiona una segmentation fault
+  destruir(pLista); // Lo que va después si se ejecuta ocasiona una segmentation fault
   // imprimir(pLista);
   // printf("%d---%d , %d\n", pLista->pPrimero->valor, pLista->pUltimo->valor, longitud(pLista));
   return 0;

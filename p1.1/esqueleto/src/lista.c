@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lista.h>
-
-int tamaño = 0;
+#include <string.h>
 
 // Crea una lista con un nodo.
+//!RESUMIR Y TERMINAR DE COMENTAR PABLO
 
 /*
  * Para crear la lista, le pasamos el puntero con el nombre de la lista (pLista) y un valor entero
@@ -14,13 +14,14 @@ int tamaño = 0;
  * Aqui guardaremos el valor entero y un siguiente nodo apuntando a NULL (hasta que se agregue otro elemento).
  */
 
-void crear(TLista *pLista, int valor)
+void crear(TLista *pLista, char valor[])
 {
   pLista->pPrimero = malloc(sizeof(TNodo));
-  pLista->pPrimero->valor = valor;
+  // pLista->pPrimero->valor = valor;
+  pLista->pPrimero->valor = malloc(strlen(valor)*sizeof(char));
+  strcpy(pLista->pPrimero->valor, valor);
   pLista->pPrimero->pSiguiente = NULL;
   pLista->pUltimo = pLista->pPrimero;
-  tamaño = 1;
 }
 
 /*
@@ -39,11 +40,11 @@ void destruir(TLista *pLista)
   for (pAux1 = pLista->pPrimero; pAux1 != NULL;)
   {
     pAux2 = pAux1->pSiguiente;
+    free(pAux1->valor);
     free(pAux1);
     pAux1 = pAux2;
   }
   free(pLista);
-  tamaño = 0;
 }
 
 // Inserta al principio/inicio de la lista.
@@ -56,26 +57,27 @@ void destruir(TLista *pLista)
  * pLista->pPrimero ES EL PRIMER ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = HEAD O CABEZA
  * pLista->pUltimo ES EL ULTIMO ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = TAIL O COLA
  */
-void insertar(TLista *pLista, int valor)
+void insertar(TLista *pLista, char valor[])
 {
   TNodo *nuevo = malloc(sizeof(TNodo));
-  nuevo->valor = valor;
+  nuevo->valor = malloc(strlen(valor)*sizeof(char));
+  strcpy(nuevo->valor, valor);
   nuevo->pSiguiente = pLista->pPrimero;
   pLista->pPrimero = nuevo;
-  tamaño++;
 }
 
 // Inserta al final de la lista.
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 
-void insertarFinal(TLista *pLista, int valor)
+void insertarFinal(TLista *pLista, char valor[])
 {
   TNodo *nuevo = malloc(sizeof(TNodo));
-  nuevo->valor = valor;
+  // nuevo->valor = valor;
   pLista->pUltimo->pSiguiente = nuevo;
   pLista->pUltimo = nuevo;
+  pLista->pUltimo->valor = malloc(strlen(valor)*sizeof(char));
+  strcpy(pLista->pUltimo->valor, valor);
   pLista->pUltimo->pSiguiente = NULL;
-  tamaño++;
 }
 
 // Suponemos n = 1, 2, ...
@@ -95,39 +97,40 @@ void insertarFinal(TLista *pLista, int valor)
  *       a tener el elemento 'n' de la lista enlazada.
  */
 
-void insertarN(TLista *pLista, int index, int valor)
+void insertarN(TLista *pLista, int index, char valor[])
 {
 
-  if (index < 0 || index > tamaño - 1)
+  if (index < 0 || index > longitud(pLista) - 1)
   {
     printf("Posición ilegal. Como el Aston Martin de Fernando\n");
     exit(-1);
   }
   else
   {
-    TNodo *insercion = malloc(sizeof(TNodo));
     if (index == 0)
     {
-      insercion->valor = valor;
-      insercion->pSiguiente = pLista->pPrimero;
-      pLista->pPrimero = insercion;
+      // clon->valor = malloc(strlen(valor)*sizeof(char));
+      // strcpy(clon->valor, valor);
+      // clon->pSiguiente = pLista->pPrimero;
+      // pLista->pPrimero = clon;
+      insertar(pLista,valor);
     }
     else
     {
       TNodo *nodoiterativo = malloc(sizeof(TNodo));
+      TNodo *clon = malloc(sizeof(TNodo));
       nodoiterativo = pLista->pPrimero;
 
       for (int i = 1; i <= index; i++)
       {
         nodoiterativo = nodoiterativo->pSiguiente;
       }
-      insercion->valor = nodoiterativo->valor;
-      insercion->pSiguiente = nodoiterativo->pSiguiente;
-      nodoiterativo->pSiguiente = insercion;
+      clon->valor = nodoiterativo->valor;
+      clon->pSiguiente = nodoiterativo->pSiguiente;
+      nodoiterativo->pSiguiente = clon;
       nodoiterativo->valor = valor;
     }
   }
-  tamaño++;
 }
 
 //  Elimina el prime  r elemento de la lista.
@@ -135,16 +138,16 @@ void insertarN(TLista *pLista, int index, int valor)
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 void eliminar(TLista *pLista)
 {
-  //!BORRA EL PRIMERO
+  //! BORRA EL PRIMERO
 
   // TNodo *elim = pLista->pPrimero;
   // pLista->pPrimero = pLista->pPrimero->pSiguiente;
   // free(elim);
   // tamaño--;
 
-  //!BORRA EL ÚLTIMO
+  //! BORRA EL ÚLTIMO
 
-  if (tamaño == 1)
+  if (longitud(pLista) == 1)
   {
     // free(pLista->pPrimero);
     // pLista->pPrimero = NULL;
@@ -156,17 +159,17 @@ void eliminar(TLista *pLista)
     TNodo *pElim;
     for (pElim = pLista->pPrimero; pElim->pSiguiente != pLista->pUltimo; pElim = pElim->pSiguiente)
       ;
+    free(pLista->pUltimo->valor);
     pLista->pUltimo = pElim;
     pElim->pSiguiente = NULL;
     free(pElim->pSiguiente);
-    tamaño--;
   }
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
 void eliminarN(TLista *pLista, int index)
 {
-  if (index < 0 || index > tamaño - 1)
+  if (index < 0 || index > longitud(pLista) - 1)
   {
     printf("Posición ilegal. Como el Red Bull de Verstappen\n");
     exit(-1);
@@ -178,6 +181,7 @@ void eliminarN(TLista *pLista, int index)
     if (index == 0)
     {
       borrar = pLista->pPrimero;
+      //free(borrar->valor);
       pLista->pPrimero = pLista->pPrimero->pSiguiente;
       free(borrar);
     }
@@ -188,11 +192,12 @@ void eliminarN(TLista *pLista, int index)
       {
         if (nodoiterativo->pSiguiente == NULL)
         {
-          printf("Roto al intentar eliminar el supuesto elemento %d\n",index);
+          printf("Roto al intentar eliminar el supuesto elemento %d\n", index);
           exit(-1);
         }
         nodoiterativo = nodoiterativo->pSiguiente;
       }
+      //free(nodoiterativo->pSiguiente->valor);
       borrar = nodoiterativo->pSiguiente;
       nodoiterativo->pSiguiente = borrar->pSiguiente;
       if (borrar->pSiguiente == NULL)
@@ -206,13 +211,12 @@ void eliminarN(TLista *pLista, int index)
       free(borrar);
     }
   }
-  tamaño--;
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
-int getElementoN(TLista *pLista, int index)
+char *getElementoN(TLista *pLista, int index)
 {
-  if (index < 0 || index > tamaño - 1)
+  if (index < 0 || index > (longitud(pLista) - 1))
   {
     printf("Posición ilegal. Como el Mercedes de Hamilton\n");
     exit(-1);
@@ -234,12 +238,17 @@ int getElementoN(TLista *pLista, int index)
 void imprimir(TLista *pLista)
 {
   for (TNodo *pIterador = pLista->pPrimero; pIterador != NULL; pIterador = pIterador->pSiguiente)
-    printf("[ %d ]", pIterador->valor);
+    printf("[ %s ]", pIterador->valor);
   printf("\n");
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY -PABLO
 int longitud(TLista *pLista)
 {
-  return tamaño;
+  int tam = 0;
+  for (TNodo *pIterador = pLista->pPrimero; pIterador != NULL; pIterador = pIterador->pSiguiente)
+  {
+    tam += 1;
+  }
+  return tam;
 }
