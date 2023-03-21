@@ -1,15 +1,13 @@
 #ifndef _LISTA_
 #define _LISTA_
 
-//* Definición de una estructura con sinónimo: definimos la estructura Nodo (contenido + puntero a siguiente nodo)
 typedef struct Nodo
 {
   char *valor;
   struct Nodo *pSiguiente;
-} TNodo; //! La estructura Nodo también se puede definir como TNodo
+} TNodo;
 
 
-//* Definimos la estructura 'anónima' TLista que contendrá un puntero al primer nodo (elemento de la lista)
 typedef struct
 {
   TNodo *pPrimero;

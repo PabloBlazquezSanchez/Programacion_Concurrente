@@ -3,8 +3,6 @@
 #include <lista.h>
 #include <string.h>
 
-// Crea una lista con un nodo.
-
 /*
  * Para crear una lista, le pasamos un puntero con el nombre de la lista y un valor entero como primer elemento.
  * Una vez pasados los parámetros, se crea la lista con un único nodo, que será el primer y último elemento de la lista,
@@ -43,7 +41,6 @@ void destruir(TLista *pLista)
   free(pLista);
 }
 
-// Inserta al principio/inicio de la lista.
 /*
  * Para insertar un elemento a la lista, le pasamos el puntero con el nombre de la lista y un entero que
  * contiene el valor a insertar. Se crea un puntero de tipo TNodo con asignación de memoria de tamaño equivalente
@@ -58,8 +55,6 @@ void insertar(TLista *pLista, char valor[])
   pLista->pPrimero = nuevo;
 }
 
-// Inserta al final de la lista.
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 /*
  * Para insertar un elemento al final de la lista, le pasamos el puntero con el nombre de la lista y un entero que
  * contiene el valor a insertar. Se crea un puntero de tipo TNodo con asignación de memoria de tamaño equivalente al de TNodo.
@@ -78,9 +73,6 @@ void insertarFinal(TLista *pLista, char valor[])
   pLista->pUltimo->pSiguiente = NULL;
 }
 
-// Suponemos n = 1, 2, ...
-
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
 /*
  * Para insertar un valor cualquiera en una posición N de la lista, suponemos que lo insertamos detras de N. Una vez recogidos los
  * parámetros, se controla que el índice no sea negativo o sobrepase el ínidce del último elemento. Con índice válido, se declaran dos
@@ -102,10 +94,6 @@ void insertarN(TLista *pLista, int index, char valor[])
   {
     if (index == 0)
     {
-      // clon->valor = malloc(strlen(valor)*sizeof(char));
-      // strcpy(clon->valor, valor);
-      // clon->pSiguiente = pLista->pPrimero;
-      // pLista->pPrimero = clon;
       insertar(pLista,valor);
     }
     else
@@ -126,9 +114,6 @@ void insertarN(TLista *pLista, int index, char valor[])
   }
 }
 
-//  Elimina el prime  r elemento de la lista.
-//! AHORA MISMO ELIMINA EL ULTIMO.
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 /*
  * Para eliminar el último elemento de la lista, le pasamos el puntero con el nombre de la lista en primer lugar.
  * Si la pila sólo tiene un elemento, se llama al método destruir. Si tiene más, se recorre la lista con un bucle for
@@ -137,20 +122,8 @@ void insertarN(TLista *pLista, int index, char valor[])
 */
 void eliminar(TLista *pLista)
 {
-  //! BORRA EL PRIMERO
-
-  // TNodo *elim = pLista->pPrimero;
-  // pLista->pPrimero = pLista->pPrimero->pSiguiente;
-  // free(elim);
-  // tamaño--;
-
-  //! BORRA EL ÚLTIMO
-
   if (longitud(pLista) == 1)
   {
-    // free(pLista->pPrimero);
-    // pLista->pPrimero = NULL;
-    // pLista->pUltimo = NULL;
     destruir(pLista);
   }
   else
@@ -165,7 +138,6 @@ void eliminar(TLista *pLista)
   }
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
 /*
  * Para elminar un elemento en concreto de la lista, le pasamos el puntero con el nombre de la lista y un entero con el índice
  * del elemento a eliminar. Primero se controla si el índice es negativo o mayor al índice del último elemento. Tras esto se crea
@@ -220,7 +192,6 @@ void eliminarN(TLista *pLista, int index)
   }
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY
 /*
  * Para obtener un elemento de la lista, le pasamos el puntero con el nombre de la lista y un entero que 
  * contiene el índice a obtener. Comprobamos si el índice está dentro del rango de la lista y en caso contrario,
@@ -240,7 +211,6 @@ char *getElementoN(TLista *pLista, int index)
   return aux->valor;
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
 /* 
  * Para imprimir la lista primero vamos a pasarle el puntero con el nombre de la lista y con un bucle
  * for se va a imprimir el índice y el valor de cada elemento desde el primero hasta el último.
@@ -253,7 +223,6 @@ void imprimir(TLista *pLista)
   printf("\n");
 }
 
-// TODO COMENTARIO TO GUAPO AHI A LO GUAY -PABLO
 /*
  * Para obtener la longitud de la lista le vamos a pasar el puntero con el nombre de la lista.
  * Usamos un bucle for para recorrer toda la lista y mientras se va recorriendo se le suma 1

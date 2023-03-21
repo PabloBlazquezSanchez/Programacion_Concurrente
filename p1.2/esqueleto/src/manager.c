@@ -157,7 +157,6 @@ void procesar_linea(char *linea)
     insertarFinal(patrones, token);
     token = strtok(NULL, " ");
   }
-  // imprimir(patrones);
 }
 
 /*

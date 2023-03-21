@@ -4,14 +4,10 @@
 
 void contar(char *line, int line_number);
 
-//!COMENTAR PABLO
-
-//! execl(RUTA_CONTADOR, CLASE_CONTADOR, linea, numero_linea_str, NULL)
-//!   argv      X             0           1           2           NULL
 // Se pasan de manager la línea (argumento 1) y el número de línea en string (argumento 2) y se ejecuta el método contar
 int main(int argc, char *argv[])
 {
-  contar(argv[1], atoi(argv[2])); //atoi == cast() de java
+  contar(argv[1], atoi(argv[2]));
   
   return EXIT_SUCCESS;
 }
