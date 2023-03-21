@@ -4,14 +4,11 @@
 #include <string.h>
 
 // Crea una lista con un nodo.
-//!RESUMIR Y TERMINAR DE COMENTAR PABLO
 
 /*
- * Para crear la lista, le pasamos el puntero con el nombre de la lista (pLista) y un valor entero
- * como contenido. En principio, se crea una lista con un único nodo (y su entero), que será EL PRIMERO y EL ÚLTIMO
- * (hasta que se introduzcan nodos nuevos o se destruya la lista).
- * Por eso su asignación dinámica en memoria es coon el tamaño del nodo 'TNodo'.
- * Aqui guardaremos el valor entero y un siguiente nodo apuntando a NULL (hasta que se agregue otro elemento).
+ * Para crear una lista, le pasamos un puntero con el nombre de la lista y un valor entero como primer elemento.
+ * Una vez pasados los parámetros, se crea la lista con un único nodo, que será el primer y último elemento de la lista,
+ * pues se acaba de crear ésta. Debido a esto se emplea asignación en memoria del nodo y valor del nodo.
  */
 
 void crear(TLista *pLista, char valor[])
@@ -25,11 +22,10 @@ void crear(TLista *pLista, char valor[])
 }
 
 /*
- * En cambio, para destruir la lista, lo que se hace de manera iterativa es limpiar los espacios de memoria de cada
- * nodo. Para ello, se declaran dos punteros de estructura nodo. El primero empezará apuntando al primer elemento de
- * la lista. Para cada iteración, el segundo puntero apuntará al siguiente elemento. Así, se puede liberar el espacio
- * de memoria al que apunta el primer puntero, para después asignar la misma dirección de memoria a la que apunta el segundo.
- * El proceso termina cuando el primer puntero apunta a NULL, entonces, se libera el espacio de memoria de la lista.
+ * Para destruir la lista, limpiamos los espacios de memoria de cada nodo de forma iterativa empleando dos estructuras nodo.
+ * El primer nodo empieza apuntando al primer elemento de la lista mientras que el segundo nodo apuntará al siguiente elemento
+ * para cada iteración. Así, vamos liberando la lista desde el primer elemento hasta el último.
+ * Cuando el primer puntero apunta a NULL, se libera el espacio de memoria de la lista y finaliza el proceso.
  */
 
 void destruir(TLista *pLista)
@@ -49,13 +45,9 @@ void destruir(TLista *pLista)
 
 // Inserta al principio/inicio de la lista.
 /*
- * Para insertar un elemento a la pila le vamos a pasar el puntero con el nombre de la pila y
- * un entero que contiene el valor a insertar. Se crea un puntero de tipo TNodo al que se le
- * va a asignar un espacio de memoria equivalente al tamaño de TNodo. Una vez creado le vamos a
- * dar el valor introducido y le vamos a asignar como siguiente elemento, es decir, el elemento
- * de la lista que va despúes de él, el primer elemento de la lista
- * pLista->pPrimero ES EL PRIMER ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = HEAD O CABEZA
- * pLista->pUltimo ES EL ULTIMO ELEMENTO DE LA LISTA 'pLista'. EQUIVALENTE A LISTA ADT = TAIL O COLA
+ * Para insertar un elemento a la lista, le pasamos el puntero con el nombre de la lista y un entero que
+ * contiene el valor a insertar. Se crea un puntero de tipo TNodo con asignación de memoria de tamaño equivalente
+ * al de TNodo. Despues le damos el valor introducido y le asignamos como siguiente elemento el primero de la Lista.
  */
 void insertar(TLista *pLista, char valor[])
 {
@@ -68,6 +60,12 @@ void insertar(TLista *pLista, char valor[])
 
 // Inserta al final de la lista.
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
+/*
+ * Para insertar un elemento al final de la lista, le pasamos el puntero con el nombre de la lista y un entero que
+ * contiene el valor a insertar. Se crea un puntero de tipo TNodo con asignación de memoria de tamaño equivalente al de TNodo.
+ * Le damos el valor introducido, le asignamos como elemento siguiente del ultimo elemento de la lista el elemento nuevo y a la
+ * lista le asignamos como último elemento el creado.
+*/
 
 void insertarFinal(TLista *pLista, char valor[])
 {
@@ -84,17 +82,12 @@ void insertarFinal(TLista *pLista, char valor[])
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
 /*
- * Para insertar un valor cualquiera en una posición N de la lista, presuponemos que se inserta detrás de dicha posición N.
- * Lo primero que haremos será controlar el valor de índice que se le pasa a la función, siendo incorrectos los valores nulos
- * o aquellos que sobrepasen el valor del último índice de la lista (= tamaño - 1).
- *
- * Una vez tenemos un índice válido, declaramos un nodo de inserción al que le hacemos una asignación en memoria con el
- * tamaño de un nodo. Despúes, discriminamos si el índice es 0 o >=1:
- *     - Para index = 0 procedemos similar al método insertar()
- *     - Para index >= 1, nos vamos a apoyar en otro nodo auxiliar que hemos denominado como iterativo, ya que irá avanzando las
- *       posiciones de la lista ("nodo iterativo = su siguiente nodo"). Una vez el iterador se ha colocado en la posición 'index',
- *       clonamos la información del nodo iterativo en el de inserción, ya que el nodo iterativo con posición 'n' es equivalente
- *       a tener el elemento 'n' de la lista enlazada.
+ * Para insertar un valor cualquiera en una posición N de la lista, suponemos que lo insertamos detras de N. Una vez recogidos los
+ * parámetros, se controla que el índice no sea negativo o sobrepase el ínidce del último elemento. Con índice válido, se declaran dos
+ * nodos auxiliares, uno iterativo de avance y otro "clon" que nos ayudará a insertarlo en la lista. Despús, discriminamos index:
+ *    - Para index = 0 --> insertar(pLista, valor)
+ *    - Para index >= 1 avanzamos en la lista hasta colocarnos en la posición "index", donde usaremos el nodo clon para recoger la información
+ *      del nodo iterativo. Así podremos redirigir estos nodos, por lo que se habría simulado una inserción.
  */
 
 void insertarN(TLista *pLista, int index, char valor[])
@@ -102,7 +95,7 @@ void insertarN(TLista *pLista, int index, char valor[])
 
   if (index < 0 || index > longitud(pLista) - 1)
   {
-    printf("Posición ilegal. Como el Aston Martin de Fernando\n");
+    fprintf(stderr,"Posición ilegal. No se puede acceder a una zona fuera de la lista. Finalizando el programa.\n");
     exit(-1);
   }
   else
@@ -136,6 +129,12 @@ void insertarN(TLista *pLista, int index, char valor[])
 //  Elimina el prime  r elemento de la lista.
 //! AHORA MISMO ELIMINA EL ULTIMO.
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
+/*
+ * Para eliminar el último elemento de la lista, le pasamos el puntero con el nombre de la lista en primer lugar.
+ * Si la pila sólo tiene un elemento, se llama al método destruir. Si tiene más, se recorre la lista con un bucle for
+ * que va a colocar a un puntero pElim justo antes del último. Luego se libera el espacio de memoria del valor del último
+ * elemento y actualizamos pUltimo, a pElim.
+*/
 void eliminar(TLista *pLista)
 {
   //! BORRA EL PRIMERO
@@ -167,11 +166,19 @@ void eliminar(TLista *pLista)
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
+/*
+ * Para elminar un elemento en concreto de la lista, le pasamos el puntero con el nombre de la lista y un entero con el índice
+ * del elemento a eliminar. Primero se controla si el índice es negativo o mayor al índice del último elemento. Tras esto se crea
+ * un puntero "borrar" de tipo TNodo que apunta a NULL. Si el índice es 0, se elimina el primer elemento de la lista. Si es >=1,
+ * se declara un nodo iterativo que recorre la lista hasta almacenar la informacion del elemento deseado. Si iterando la lista se
+ * llega a una zona de memoria no permitida, salta una excepción que finaliza el programa. Una vez finalizada la iteración se libera 
+ * el nodo deseado, reordenando la lista para que no haya espacios libres entre elementos.
+*/
 void eliminarN(TLista *pLista, int index)
 {
   if (index < 0 || index > longitud(pLista) - 1)
   {
-    printf("Posición ilegal. Como el Red Bull de Verstappen\n");
+    fprintf(stderr,"Posición ilegal. No se puede acceder a una zona fuera de la lista. Finalizando el programa.\n");
     exit(-1);
   }
   else
@@ -214,11 +221,17 @@ void eliminarN(TLista *pLista, int index)
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY
+/*
+ * Para obtener un elemento de la lista, le pasamos el puntero con el nombre de la lista y un entero que 
+ * contiene el índice a obtener. Comprobamos si el índice está dentro del rango de la lista y en caso contrario,
+ * salta una excepción que finaliza el programa. Mediante un bucle for recorremos la lista hasta llegar al índice deseado
+ * y guardamos en un puntero auxiliar el nodo. Por último devolvemos el valor almacenado en dicho nodo.
+*/
 char *getElementoN(TLista *pLista, int index)
 {
   if (index < 0 || index > (longitud(pLista) - 1))
   {
-    printf("Posición ilegal. Como el Mercedes de Hamilton\n");
+    fprintf(stderr,"Posición ilegal. No se puede acceder a una zona fuera de la lista. Finalizando el programa.\n");
     exit(-1);
   }
   TNodo *aux = pLista->pPrimero;
@@ -228,21 +241,24 @@ char *getElementoN(TLista *pLista, int index)
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY --PABLO
-/*
- * Para imprimir los elementos de la lista le pasamos el puntero con el nombre de la lista
- * y mediante un bucle for se va imprimiendo el valor contenido en cada posición de la lista,
- * desde la primera hasta la última. Esto se logra gracias a un nodo iterador, que se inicializa
- * en la primera posición y va iterando a su siguiente elemento (a través de pSiguiente) hasta
- * que el último elemento sea NULL (fin de la lista).
+/* 
+ * Para imprimir la lista primero vamos a pasarle el puntero con el nombre de la lista y con un bucle
+ * for se va a imprimir el índice y el valor de cada elemento desde el primero hasta el último.
  */
 void imprimir(TLista *pLista)
 {
+  int i=0;
   for (TNodo *pIterador = pLista->pPrimero; pIterador != NULL; pIterador = pIterador->pSiguiente)
-    printf("[ %s ]", pIterador->valor);
+    printf("[ %d | %s ]", i++, pIterador->valor);
   printf("\n");
 }
 
 // TODO COMENTARIO TO GUAPO AHI A LO GUAY -PABLO
+/*
+ * Para obtener la longitud de la lista le vamos a pasar el puntero con el nombre de la lista.
+ * Usamos un bucle for para recorrer toda la lista y mientras se va recorriendo se le suma 1
+ * unidad entera a una variable llamada 'tam'. Por último devolvemos dicha variable.
+*/
 int longitud(TLista *pLista)
 {
   int tam = 0;

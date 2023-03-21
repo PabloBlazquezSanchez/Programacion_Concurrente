@@ -8,6 +8,7 @@ void contar(char *line, int line_number);
 
 //! execl(RUTA_CONTADOR, CLASE_CONTADOR, linea, numero_linea_str, NULL)
 //!   argv      X             0           1           2           NULL
+// Se pasan de manager la línea (argumento 1) y el número de línea en string (argumento 2) y se ejecuta el método contar
 int main(int argc, char *argv[])
 {
   contar(argv[1], atoi(argv[2])); //atoi == cast() de java
@@ -15,6 +16,14 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 
+/*
+ * El método contar se va a encargar de darnos a conocer cuántas palabras tiene una línea. Para ello se definen tres variables,
+ * una recoge en número de palabras, otra que comprueba si estamos dentro de una palabra y un iterador que toma el valor de la línea.
+ * Mediante un bucle do-while se irá recorriendo la línea y visualizando si hay valores nulos(\0), espacios(" "), tabulaciones(\t), saltos de línea(\n)
+ * y recorrimientos de cursor a la izquierda(\n), donde comprobará si es cualquier otra cosa. En caso afirmativo, se tratará de una palabra
+ * y se sumará una unidad a la variable n_palabras y se cambia el valor del comprobante a 0. Se realiza de forma iterativa hasta que
+ * se termina de recorrer la línea. Entonces se imprime el número de palabras de esa línea.
+*/
 void contar(char *linea, int numero_linea)
 {
   int n_palabras = 0, dentro_palabra = 0;

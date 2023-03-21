@@ -8,7 +8,6 @@ typedef struct Nodo
   struct Nodo *pSiguiente;
 } TNodo; //! La estructura Nodo también se puede definir como TNodo
 
-// Hola esto es un comentario
 
 //* Definimos la estructura 'anónima' TLista que contendrá un puntero al primer nodo (elemento de la lista)
 typedef struct
