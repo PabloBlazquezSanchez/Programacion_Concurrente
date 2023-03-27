@@ -14,8 +14,8 @@
 
 
 void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas);
-void instalar_manejador_senhal();
-void manejador_senhal(int sign);
+void instalar_manejador_senhal(); //OK
+void manejador_senhal(int sign); //OK
 void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);
 void crear_procesos(int numTelefonos, int numLineas);
 void lanzar_proceso_telefono(const int indice_tabla);
@@ -66,5 +66,24 @@ int main(int argc, char *argv[])
 
     return EXIT_SUCCESS;
 }
-
-//TODO: Realizar todas las funciones necesarias.
+void instalar_manejador_senhal(){
+    if (signal(SIGINT, manejador_senhal) == SIG_ERR)
+  {
+    fprintf(stderr, "[MANAGER] Error al instalar el manejador se senhal: %s.\n", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+}
+void manejador_senhal(int sign){
+    printf("\n[MANAGER] Terminacion del programa (Ctrl + C).\n");
+    terminar_procesos();
+    liberar_recursos();
+    exit(EXIT_SUCCESS);
+}
+void terminar_procesos(){
+    //Termina LINEAS (especificos), luego TELEFONOS.
+}
+void liberar_recursos(){
+    //free de las tablas de procesos lineas y telefonos
+    free(g_process_lineas_table);
+    free(g_process_telefonos_table);
+}
