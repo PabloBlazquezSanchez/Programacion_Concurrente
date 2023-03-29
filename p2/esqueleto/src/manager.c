@@ -13,10 +13,10 @@
 #include <semaforoI.h>
 
 
-void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas);
+void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas); //OK Supongo
 void instalar_manejador_senhal(); //OK
 void manejador_senhal(int sign); //OK
-void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);
+void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea); //?OK
 void crear_procesos(int numTelefonos, int numLineas);
 void lanzar_proceso_telefono(const int indice_tabla);
 void lanzar_proceso_linea(const int indice_tabla);
@@ -66,6 +66,33 @@ int main(int argc, char *argv[])
 
     return EXIT_SUCCESS;
 }
+
+void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas){
+    if (argc != 3){
+        fprintf(stderr,"Error. Usa: ./exec/maager <nº teléfonos> <nº líneas>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    nTelefonos = argv[1];
+    nLineas = argv[2];
+}
+
+void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea){
+    g_telefonosProcesses = n_procesos_telefono;
+    g_lineasProcesses = n_procesos_linea;
+
+    g_process_lineas_table = malloc(g_lineasProcesses * sizeof(struct TProcess_t));
+    g_process_telefonos_table = malloc(g_telefonosProcesses * sizeof(struct TProcess_t));
+
+    for(int i = 0; i < g_telefonosProcesses; i++){
+        g_process_telefonos_table[i].pid = 0;
+    }
+
+    for(int i = 0; i < g_lineasProcesses; i++){
+        g_process_lineas_table[i].pid = 0;
+    }
+}
+
 void instalar_manejador_senhal(){
     if (signal(SIGINT, manejador_senhal) == SIG_ERR)
   {
