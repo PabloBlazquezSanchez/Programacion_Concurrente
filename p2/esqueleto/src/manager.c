@@ -12,18 +12,35 @@
 #include <memoriaI.h>
 #include <semaforoI.h>
 
+/*
+▪ Recibirá dos argumentos: <nº teléfonos> <nº líneas>
+▪ Inicializará los semáforos y la memoria compartida para almacenar el número de
+  llamadas en espera.
+▪ Lanzará el número de procesos teléfono y procesos línea especificado en los
+  argumentos.
+▪ Realizará el apagado controlado de Obelix. Para ello, esperará la finalización
+  automática de todos los procesos línea y forzará la finalización de los procesos
+  teléfono una vez hayan finalizados todos los procesos línea.
+▪ Controlará el Apagado de emergencia de Obelix, ante la pulsación de Ctrl-C. Esto
+  es:
+        - Forzará la finalización de todos los procesos línea actualmente en
+          funcionamiento.
+        - Forzará la finalización de todos los procesos teléfono existentes.
+▪ Por último, pero no menos importante, liberará todos los recursos utilizados.
+  (semáforos, memoria compartida, etc.)
+*/
 
-void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas); //OK Supongo
-void instalar_manejador_senhal(); //OK
-void manejador_senhal(int sign); //OK
-void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea); //?OK
-void crear_procesos(int numTelefonos, int numLineas);
-void lanzar_proceso_telefono(const int indice_tabla);
-void lanzar_proceso_linea(const int indice_tabla);
-void esperar_procesos();
-void terminar_procesos(void);
-void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num);
-void liberar_recursos();
+void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas); //*OK
+void instalar_manejador_senhal(); //*OK
+void manejador_senhal(int sign); //*OK
+void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea); //? 1/2 OK
+void crear_procesos(int numTelefonos, int numLineas); //TODO
+void lanzar_proceso_telefono(const int indice_tabla); //TODO
+void lanzar_proceso_linea(const int indice_tabla); //TODO
+void esperar_procesos(); //TODO
+void terminar_procesos(void); //TODO
+void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); //TODO
+void liberar_recursos(); // TODO
 
 int g_telefonosProcesses = 0;
 int g_lineasProcesses = 0;
@@ -68,10 +85,13 @@ int main(int argc, char *argv[])
 }
 
 void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas){
+
     if (argc != 3){
         fprintf(stderr,"Error. Usa: ./exec/maager <nº teléfonos> <nº líneas>.\n");
         exit(EXIT_FAILURE);
     }
+
+    //! Aconsejable usar atoi o algo para discriminar letras de números
 
     nTelefonos = argv[1];
     nLineas = argv[2];
@@ -107,10 +127,14 @@ void manejador_senhal(int sign){
     exit(EXIT_SUCCESS);
 }
 void terminar_procesos(){
-    //Termina LINEAS (especificos), luego TELEFONOS.
+    //Termina LINEAS, luego TELEFONOS. AMBOS ESPECIFICOS
+    //! Importante, manager espera de manera natural a que acaben las líneas -> Forzamos apagado de teléfonos
+    //! Pillar el bucle de puente de un solo carril
 }
 void liberar_recursos(){
     //free de las tablas de procesos lineas y telefonos
     free(g_process_lineas_table);
     free(g_process_telefonos_table);
+    //! En algún momento hay que cerrar y eliminar los semáforos: primitivas para cerrar (sem_close()) y eliminar (sem_unlink()) un semáforo, liberando así los recursos previamente creados por sem_open(). 
+    //! De la misma manera, para la variable compartida. Ver práctica de PUENTE DE UN SOLO CARRIL.
 }

@@ -7,6 +7,19 @@
 #include <memoriaI.h>
 #include <semaforoI.h>
 
+/*
+▪ Se inician y esperan una llamada (Simulado con un rand() entre 1..30 segundos),
+  informando de ello: “Linea[UID] esperando llamada”.
+▪ Cuando reciben la llamada (Finalización de rand()):
+• Incrementarán el contador de llamadas en espera.
+• Esperarán a que exista un teléfono libre, informando de ello: “Linea[UID]
+  esperando teléfono libre…”, además en esa misma línea informarán del número
+  de llamadas en espera en ese momento:"Nº de llamadas en espera: [shm]”.
+• Cuando exista un teléfono libre, desviarán la llamada hacia el teléfono,
+  informando de ello: “Linea[UID] desviando llamada a un teléfono…” y
+  finalizarán su trabajo
+*/
+
 // Modulo principal
 int main(int argc,char *argv[]){
 
