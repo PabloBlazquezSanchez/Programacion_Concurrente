@@ -21,27 +21,32 @@
 */
 
 // Modulo principal
-int main(int argc,char *argv[]){
+int main(int argc, char *argv[])
+{
+  int valorEspera = 0;
+  srand((int)getpid());
+  // Coge semáforos y memoria compartida
+  sem_t *mutexespera = get_sem(/*id_mutexespera*/ argv[1]);
+  sem_t *telf = get_sem(/*id_telefono*/ argv[2]);
+  sem_t *linea = get_sem(/*id_linea*/ argv[3]);
+  int manejador_espera = obtener_var(/*LLAMADAESPERA*/ argv[4]);
+  // TODO: Esquema especificado en la práctica.
+  // Realiza una espera entre 1..30 segundos
+  printf("Linea [%d] esperando llamada...\n", (int)getpid());
+  sleep(rand() % 30 + 1);
 
-	//TODO: Esquema especificado en la práctica.
-	
-	
-    // Coge semáforos y memoria compartida
+  // Aumenta las llamadas en espera
+  wait(mutexespera);
+  consultar_var(manejador_espera, &valorEspera);
+  modificar_var(manejador_espera, ++valorEspera);
+  signal(mutexespera);
 
+  // Espera telefono libre
+  printf("Linea [%d] esperando telefono libre...Nº Llamadas en espera: %d\n", (int)getpid(), valorEspera);
 
-    // Realiza una espera entre 1..60 segundos
-    printf("Linea [%d] esperando llamada...\n",pid);
-    sleep(rand() % 30 + 1);
-
-    //Aumenta las llamadas en espera
-
-
-    // Espera telefono libre
-    printf("Linea [%d] esperando telefono libre...Nº Llamadas en espera: %d\n",pid,valorEspera);
-
-    // Lanza la llamada
-    printf("Linea [%d] desviando llamada a un telefono...\n",pid);
-
-
-    return EXIT_SUCCESS;
+  // Lanza la llamada
+  printf("Linea [%d] desviando llamada a un telefono...\n", (int)getpid());
+  signal(telf);
+  wait(linea);
+  return EXIT_SUCCESS;
 }
