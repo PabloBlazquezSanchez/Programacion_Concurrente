@@ -22,7 +22,6 @@ telefono: $(DIROBJ)telefono.o $(DIROBJ)semaforoI.o $(DIROBJ)memoriaI.o
 linea: $(DIROBJ)linea.o $(DIROBJ)semaforoI.o $(DIROBJ)memoriaI.o
 	$(CC) -o $(DIREXE)$@ $^ $(LDFLAGS)
 
-
 $(DIROBJ)%.o: $(DIRSRC)%.c
 	$(CC) $(CFLAGS) $^ -o $@
 

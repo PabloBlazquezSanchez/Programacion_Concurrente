@@ -6,6 +6,7 @@
 #include <definitions.h>
 #include <memoriaI.h>
 #include <semaforoI.h>
+#include<sys/wait.h>
 
 /*
 ▪ Se inician y esperan una llamada (Simulado con un rand() entre 1..30 segundos),
@@ -36,17 +37,17 @@ int main(int argc, char *argv[])
   sleep(rand() % 30 + 1);
 
   // Aumenta las llamadas en espera
-  wait(mutexespera);
+  wait_sem(mutexespera);
   consultar_var(manejador_espera, &valorEspera);
   modificar_var(manejador_espera, ++valorEspera);
-  signal(mutexespera);
+  signal_sem(mutexespera);
 
   // Espera telefono libre
   printf("Linea [%d] esperando telefono libre...Nº Llamadas en espera: %d\n", (int)getpid(), valorEspera);
 
   // Lanza la llamada
   printf("Linea [%d] desviando llamada a un telefono...\n", (int)getpid());
-  signal(telf);
-  wait(linea);
+  signal_sem(telf);
+  wait_sem(linea);
   return EXIT_SUCCESS;
 }

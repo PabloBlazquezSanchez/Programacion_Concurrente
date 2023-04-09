@@ -6,6 +6,7 @@
 #include <definitions.h>
 #include <memoriaI.h>
 #include <semaforoI.h>
+#include<sys/wait.h>
 
 /*
 * Se inician en espera de una llamada, informando de ello: “Teléfono[UID] en espera…”
@@ -45,17 +46,17 @@ void telefono(sem_t *mutex, sem_t *telf, sem_t *linea, int wait_handler, int val
   {
     // Mensaje de Espera
     printf("Teléfono [%d] en espera...\n", (int)getpid());
-    wait(telf);
+    wait_sem(telf);
     // TODO: Aquí hay que realizar procesos ??
-    wait(mutex);
+    wait_sem(mutex);
     consultar_var(wait_handler, &valorEspera);
     modificar_var(wait_handler, --valorEspera); //! Presupongo que cuando se coge el teléfono, automáticamente ya no está en espera. Decremento una unidad
-    signal(mutex);
+    signal_sem(mutex);
     // Mensaje de EN CONVERSACION
     printf("Teléfono [%d] en conversacion... Nº Llamadas en espera: %d\n", (int)getpid(), valorEspera);
     // Espera en conversación
     sleep(rand() % 10 + 10);
-    // signal del semáforo de la línea para indicar que yá está desocupada?
-    signal(linea);
+    // signal_sem del semáforo de la línea para indicar que yá está desocupada?
+    signal_sem(linea);
   }
 }
