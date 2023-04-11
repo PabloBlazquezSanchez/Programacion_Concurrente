@@ -46,8 +46,10 @@ void telefono(sem_t *mutex, sem_t *telf, sem_t *linea, int wait_handler, int val
   {
     // Mensaje de Espera
     printf("Teléfono [%d] en espera...\n", (int)getpid());
-    wait_sem(telf);
-    // TODO: Aquí hay que realizar procesos ??
+
+    signal_sem(telf);
+    wait_sem(linea);
+
     wait_sem(mutex);
     consultar_var(wait_handler, &valorEspera);
     modificar_var(wait_handler, --valorEspera); //! Presupongo que cuando se coge el teléfono, automáticamente ya no está en espera. Decremento una unidad
@@ -57,6 +59,5 @@ void telefono(sem_t *mutex, sem_t *telf, sem_t *linea, int wait_handler, int val
     // Espera en conversación
     sleep(rand() % 10 + 10);
     // signal_sem del semáforo de la línea para indicar que yá está desocupada?
-    signal_sem(linea);
   }
 }

@@ -44,10 +44,10 @@ int main(int argc, char *argv[])
 
   // Espera telefono libre
   printf("Linea [%d] esperando telefono libre...Nº Llamadas en espera: %d\n", (int)getpid(), valorEspera);
+  wait_sem(telf);
 
   // Lanza la llamada
   printf("Linea [%d] desviando llamada a un telefono...\n", (int)getpid());
-  signal_sem(telf);
-  wait_sem(linea);
+  signal_sem(linea);
   return EXIT_SUCCESS;
 }
