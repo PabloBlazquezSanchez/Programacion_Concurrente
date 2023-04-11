@@ -33,13 +33,13 @@ void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLine
 void instalar_manejador_senhal();                                                      //*OK
 void manejador_senhal(int sign);                                                       //*OK
 void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);            //*OK
-void crear_procesos(int numTelefonos, int numLineas);                                  // TODO
-void lanzar_proceso_telefono(const int indice_tabla);                                  // TODO
-void lanzar_proceso_linea(const int indice_tabla);                                     // TODO
-void esperar_procesos();                                                               // TODO
-void terminar_procesos(void);                                                          // TODO
-void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); // TODO
-void liberar_recursos();                                                               // TODO
+void crear_procesos(int numTelefonos, int numLineas);                                  //*OK
+void lanzar_proceso_telefono(const int indice_tabla);                                  //*OK
+void lanzar_proceso_linea(const int indice_tabla);                                     //*OK
+void esperar_procesos();                                                               //*OK
+void terminar_procesos(void);                                                          //*OK
+void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); //*OK
+void liberar_recursos();                                                               //*OK
 
 int g_telefonosProcesses = 0;
 int g_lineasProcesses = 0;
@@ -230,14 +230,11 @@ void esperar_procesos()
             }
         }
     }
-    terminar_procesos_especificos(g_process_telefonos_table, g_telefonosProcesses);
-    // aqui forzar a acabar tlf
 }
 
 void terminar_procesos()
 {
     // Termina LINEAS, luego TELEFONOS. AMBOS ESPECIFICOS
-    // terminar_procesos_especificos(g_lineasProcesses, numLineas);
     //! Importante, manager espera de manera natural a que acaben las líneas -> Forzamos apagado de teléfonos
     //! Pillar el bucle de puente de un solo carril
 
@@ -270,6 +267,4 @@ void liberar_recursos()
     destruir_var(LLAMADASESPERA);
     free(g_process_lineas_table);
     free(g_process_telefonos_table);
-    //! En algún momento hay que cerrar y eliminar los semáforos: primitivas para cerrar (sem_close()) y eliminar (sem_unlink()) un semáforo, liberando así los recursos previamente creados por sem_open().
-    //! De la misma manera, para la variable compartida. Ver práctica de PUENTE DE UN SOLO CARRIL.
 }
