@@ -7,39 +7,21 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include <definitions.h>
 #include <memoriaI.h>
 #include <semaforoI.h>
 
-/*
-* Recibirá dos argumentos: <nº teléfonos> <nº líneas>
-* Inicializará los semáforos y la memoria compartida para almacenar el número de llamadas en espera.
-▪ Lanzará el número de procesos teléfono y procesos línea especificado en los
-  argumentos.
-▪ Realizará el apagado controlado de Obelix. Para ello, esperará la finalización
-  automática de todos los procesos línea y forzará la finalización de los procesos
-  teléfono una vez hayan finalizados todos los procesos línea.
-▪ Controlará el Apagado de emergencia de Obelix, ante la pulsación de Ctrl-C. Esto
-  es:
-        - Forzará la finalización de todos los procesos línea actualmente en
-          funcionamiento.
-        - Forzará la finalización de todos los procesos teléfono existentes.
-▪ Por último, pero no menos importante, liberará todos los recursos utilizados.
-  (semáforos, memoria compartida, etc.)
-*/
-
-void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas);   //*OK
-void instalar_manejador_senhal();                                                      //*OK
-void manejador_senhal(int sign);                                                       //*OK
-void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);            //*OK
-void crear_procesos(int numTelefonos, int numLineas);                                  //*OK
-void lanzar_proceso_telefono(const int indice_tabla);                                  //*OK
-void lanzar_proceso_linea(const int indice_tabla);                                     //*OK
-void esperar_procesos();                                                               //*OK
-void terminar_procesos(void);                                                          //*OK
-void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); //*OK
-void liberar_recursos();                                                               //*OK
+void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas);
+void instalar_manejador_senhal();
+void manejador_senhal(int sign);
+void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);
+void crear_procesos(int numTelefonos, int numLineas);
+void lanzar_proceso_telefono(const int indice_tabla);
+void lanzar_proceso_linea(const int indice_tabla);
+void esperar_procesos();
+void terminar_procesos(void);
+void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num);
+void liberar_recursos();
 
 int g_telefonosProcesses = 0;
 int g_lineasProcesses = 0;
@@ -106,6 +88,7 @@ void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas)
         fprintf(stderr, "Error al obtener el número de líneas.\n");
         exit(EXIT_FAILURE);
     }
+
     printf("%d tel, %d lin.\n", *nTelefonos, *nLineas);
 }
 
