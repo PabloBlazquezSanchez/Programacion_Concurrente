@@ -12,8 +12,8 @@
 #include <semaforoI.h>
 
 void procesar_argumentos(int argc, char *argv[], int *numTelefonos, int *numLineas);
-void instalar_manejador_senhal();
-void manejador_senhal(int sign);
+void instalar_manejador_senhal(); 
+void manejador_senhal(int sign); 
 void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);
 void crear_procesos(int numTelefonos, int numLineas);
 void lanzar_proceso_telefono(const int indice_tabla);
@@ -25,8 +25,8 @@ void liberar_recursos();
 
 int g_telefonosProcesses = 0;
 int g_lineasProcesses = 0;
-struct TProcess_t *g_process_telefonos_table;
-struct TProcess_t *g_process_lineas_table;
+struct TProcess_t *g_process_telefonos_table; //Tabla de procesos telefono
+struct TProcess_t *g_process_lineas_table; //Tabla de procesos linea
 
 int main(int argc, char *argv[])
 {
@@ -66,8 +66,11 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-// Si los argumentos no son el nombre el programa y el num. de lineas y telefonos, error.
-
+/*
+ * Este método se encarga de administrar los argumentos de la línea de órdenes,
+ * ignorando el 0 (nombre del programa), el 1 es el número de téfonos y el 2 es
+ * el número de líneas.
+*/
 void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas)
 {
 
@@ -76,7 +79,6 @@ void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas)
         fprintf(stderr, "Error. Usa: ./exec/maager <nº teléfonos> <nº líneas>.\n");
         exit(EXIT_FAILURE);
     }
-    //! Si por alguna razón los parámetros no se pillan bien, probar a deshacer esto con un simple atoi, he pillado esto de lo de ssoo 1
     if (sscanf(argv[1], "%d", nTelefonos) != 1)
     {
         fprintf(stderr, "Error al obtener el número de teléfonos.\n");
@@ -88,10 +90,12 @@ void procesar_argumentos(int argc, char *argv[], int *nTelefonos, int *nLineas)
         fprintf(stderr, "Error al obtener el número de líneas.\n");
         exit(EXIT_FAILURE);
     }
-
-    printf("%d tel, %d lin.\n", *nTelefonos, *nLineas);
 }
 
+/*
+ * Instala el manejador de la señal de interrupción, para que el
+ * programa tenga un comportamiento determinado cuando llegue una.
+*/
 void instalar_manejador_senhal()
 {
     if (signal(SIGINT, manejador_senhal) == SIG_ERR)
@@ -100,6 +104,12 @@ void instalar_manejador_senhal()
         exit(EXIT_FAILURE);
     }
 }
+
+/*
+ * Cuando llegue una señal de interrupción, el manejador hará por defecto
+ * una terminación el programa, matando los procesos hijos creados,
+ * liberando recursos y finalizando el principal, con éxito.
+*/
 void manejador_senhal(int sign)
 {
     printf("\n[MANAGER] Terminacion del programa (Ctrl + C).\n");
@@ -107,6 +117,13 @@ void manejador_senhal(int sign)
     liberar_recursos();
     exit(EXIT_SUCCESS);
 }
+
+/*
+ * En este método se creará e inicializará dos tablas de procesos,
+ * una para teléfonos y otra para líneas.
+ *  -El total de procesos que tendrá la tabla de teléfonos será el número de teléfonos introducido en la linea de comandos.
+ *  -El total de procesos que tendrá la tabla de lineas será el número de lineas introducido en la linea de comandos.
+*/
 void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea)
 {
     g_telefonosProcesses = n_procesos_telefono;
@@ -126,9 +143,14 @@ void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea)
     }
 }
 
+/*
+ * Desde este método se gestionará el arranque de los diferentes procesos.
+ * Primero se inician los procesos telefono y luego se inician los procesos linea
+ * ya que si lo hacemos al contrario tendriamos el inconveniente de que las lineas
+ * que se van creando no encuentran ningún telefono libre.
+*/
 void crear_procesos(int numTelefonos, int numLineas)
 {
-    // hfhf
     int indice_tabla = 0;
     for (int i = 0; i < numTelefonos; i++)
     {
@@ -149,6 +171,12 @@ void crear_procesos(int numTelefonos, int numLineas)
     sleep(1);
 }
 
+/*
+ * Para lanzar el proceso telefono requerimos el indice de tabla que posteriormente vamos a
+ * usar para guardar el pid y la clase.
+ * Creamos un subproceso con fork, el pid resultante (si no hay error) se guarda en la tabla de procesos
+ * con el índice de tabla, pasado también a la función, junto con el tipo de proceso (CLASE).
+*/
 void lanzar_proceso_telefono(const int indice_tabla)
 {
     pid_t pid;
@@ -172,6 +200,9 @@ void lanzar_proceso_telefono(const int indice_tabla)
     g_process_telefonos_table[indice_tabla].clase = CLASE_TELEFONO;
 }
 
+/*
+ * Funciona de la misma manera que el método lanzar_proceso_telefono.
+*/
 void lanzar_proceso_linea(const int indice_tabla)
 {
     pid_t pid;
@@ -194,6 +225,11 @@ void lanzar_proceso_linea(const int indice_tabla)
     g_process_lineas_table[indice_tabla].clase = CLASE_LINEA;
 }
 
+/*
+ * Para que manager (proceso principal) espere a procesos hijos, vamos a contar el número de
+ * procesos restantes con n_processes. Mientras que queden procesos, hacemos un wait de cualquier hijo,
+ * ya que cuando acabe uno de ellos, vamos a poner a cero su pid en la tabla de pids.
+*/
 void esperar_procesos()
 {
     int i, n_processes = g_lineasProcesses;
@@ -215,17 +251,23 @@ void esperar_procesos()
     }
 }
 
+/*
+ * Este método presenta una función muy simple, va a llamar al método
+ * terminar_procesos_especificos para finalizar por separado las lineas y los telefonos
+ * en ese respectivo orden.
+*/
 void terminar_procesos()
 {
-    // Termina LINEAS, luego TELEFONOS. AMBOS ESPECIFICOS
-    //! Importante, manager espera de manera natural a que acaben las líneas -> Forzamos apagado de teléfonos
-    //! Pillar el bucle de puente de un solo carril
-
     printf("\n----- [MANAGER] Terminar con cualquier proceso pendiente ejecutándose -----\n");
     terminar_procesos_especificos(g_process_lineas_table, g_lineasProcesses);
     terminar_procesos_especificos(g_process_telefonos_table, g_telefonosProcesses);
 }
 
+/*
+ * Para finializar los procesos de una tabla debemos recorrer dicha tabla e ir comprobando si el pid de un proceso
+ * es distinto de 0. En caso afirmativo procedemos a matar al proceso. Si al matarlo devuelve -1 imprime error al usar
+ * la función kill().
+*/
 void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num)
 {
     for (int i = 0; i < process_num; i++)
@@ -241,9 +283,14 @@ void terminar_procesos_especificos(struct TProcess_t *process_table, int process
     }
 }
 
+/*
+ * Una vez se han terminado los procesos, este método va a destruir los semaforos
+ * y la memoria compartida mediante las funciones destruir_sem y destruir_var de las
+ * clases semaforo.c y memoria.c respectivamente, y va a liberar del espacio de 
+ * memoria las tablas de procesos creadas al principio del programa mediante la función free().
+*/
 void liberar_recursos()
 {
-    // free de las tablas de procesos lineas y telefonos
     destruir_sem(LINEAS);
     destruir_sem(TELEFONOS);
     destruir_sem(MUTEXESPERA);
