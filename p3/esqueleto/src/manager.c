@@ -30,11 +30,43 @@ struct TProcess_t *g_process_lineas_table;
 mqd_t qHandlerLlamadas;
 mqd_t qHandlerLineas[NUMLINEAS];
 
+/*
+▪ Inicializar las colas de mensajes necesarias para establecer la comunicación entre
+  líneas y teléfonos, así como, la comunicación entre los teléfonos y cada una de las
+  líneas.
+
+▪ Lanzará el número de procesos teléfono y procesos línea definidos en este caso como
+  constantes del sistema.
+  ! Este punto es copia pega del proy anterior
+
+▪ El sistema, gracias al paso de mensajes, no tendrá finalización, por lo que el
+  Apagado Controlado de Obelix se realizará mediante la pulsación de Ctrl-C.
+  ! Esperar_procesos() tal vez no sea necesario => KILL a todo
+
+• Forzará la finalización de todos los procesos línea actualmente en
+  funcionamiento.
+  ! Vuelta alo mismo del apartado anterior
+
+• Forzará la finalización de todos los procesos teléfono existentes.
+  ! Este punto es copia pega del proy anterior
+
+▪ Por último, pero no menos importante, liberará todos los recursos utilizados. (tablas
+  de procesos, colas de mensajes, etc.)
+*/
+
 int main(int argc, char *argv[])
 {
     // Define variables locales
 
     // Creamos los buzones
+    //* El sistema operativo tiene un máximo de 10 mensajes para las colas de mensajes, por lo que el número de líneas de Obelix será de 10. #DEFINE + control?
+
+    /*
+    Ojo con las colas. Son independientes de los procesos y, por tanto, si la cola se queda creada
+    y con mensajes, en la siguiente ejecución de los procesos nos pueden aparecer resultados no
+    controlados.
+    */
+
     crear_buzones();
 
     // Manejador de Ctrl-C
@@ -45,6 +77,10 @@ int main(int argc, char *argv[])
 
     // Tenemos todo
     // Lanzamos los procesos
+
+    //* Crear antes los procesos de línea que los de teléfono.
+    //! Si entra una llamada se quedará almacenada en la cola de “Llamadas a ser atendidas” hasta que estén disponibles los teléfonos.
+
     crear_procesos(NUMTELEFONOS, NUMLINEAS);
 
     // Esperamos a que finalicen las lineas
