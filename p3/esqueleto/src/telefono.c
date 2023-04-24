@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   int pid = getpid();
   //? Me interesa tener el buzon de las líneas, para saber qué linea es cada llamada
   // TODO
-
+  // ME TIENE QUE LLEGAR EL NOMBRE COMPLETO DEL BUZON PARA PODER SENDEAR AL BUZON EN CONCRETO
   srand(pid);
 
   // TODO
@@ -41,12 +41,12 @@ int main(int argc, char *argv[])
   while (1)
   {
     printf("Teléfono [%d] en espera...\n", pid);
-    // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
-    // mq_receive()
+    // mq_receive() SIEMPRE Y CUANDO HAYAN COSAS EN LLAMADA
     printf("Teléfono [%d] en conversacion...\n", pid);
     sleep(rand() % 10 + 10);
     //notificar fin de llamada
     printf("Teléfono [%d] ha colgado la llamada. [buzon_linea_n]\n", pid);
+    // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
   }
 
   return EXIT_SUCCESS;
