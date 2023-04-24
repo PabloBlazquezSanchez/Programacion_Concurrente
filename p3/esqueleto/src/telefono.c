@@ -19,30 +19,35 @@
 
 ▪ Volverán a su estado inicial de espera de llamada.
 
-▪ En ningún caso finalizarán su ejecución salvo cuando el proceso Manager lo
-  considere oportuno.
+!▪En ningún caso finalizarán su ejecución salvo cuando el proceso Manager lo
+! considere oportuno.
 */
+
+// execl(filosofo, BUZON_MESA, buzon_palillo_izq, buzon_palillo_der, NULL);
 
 // Modulo principal
 int main(int argc, char *argv[])
 {
 
-    // Define variables locales
-    int pid = getpid();
-    //? Me interesa tener el buzon de las líneas, para saber qué linea es cada llamada
+  // Define variables locales
+  int pid = getpid();
+  //? Me interesa tener el buzon de las líneas, para saber qué linea es cada llamada
+  // TODO
 
-    // TODO
+  srand(pid);
 
-    srand(pid);
+  // TODO
 
-    // TODO
+  while (1)
+  {
+    printf("Teléfono [%d] en espera...\n", pid);
+    // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
+    // mq_receive()
+    printf("Teléfono [%d] en conversacion...\n", pid);
+    sleep(rand() % 10 + 10);
+    //notificar fin de llamada
+    printf("Teléfono [%d] ha colgado la llamada. [buzon_linea_n]\n", pid);
+  }
 
-    while(1){
-        printf("Teléfono [%d] en espera...\n", (int)getpid());
-        // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
-        // mq_receive()
-
-    }
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }

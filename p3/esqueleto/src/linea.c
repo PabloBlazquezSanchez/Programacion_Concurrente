@@ -27,6 +27,10 @@
 ! considere oportuno.
 */
 
+/*
+Se deben crear 10 de qHandlerLinea[i]
+*/
+
 // Modulo principal
 int main(int argc, char *argv[])
 {
