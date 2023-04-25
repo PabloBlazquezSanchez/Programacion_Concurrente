@@ -7,20 +7,19 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include <mqueue.h>
 #include <definitions.h>
 
 void crear_buzones();                                                                  //? Fijarse un poco en filosofos comensales T3
-void instalar_manejador_senhal();                                                      //! Copia pega 2
-void manejador_senhal(int sign);                                                       //! Copia pega 2
-void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);            //! Copia pega 2 o memset (mirar filosofos comensales T3)
+void instalar_manejador_senhal();                                                      //* Copia pega 2
+void manejador_senhal(int sign);                                                       //* Copia pega 2
+void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea);            //* Copia pega 2 o memset (mirar filosofos comensales T3)
 void crear_procesos(int numTelefonos, int numLineas);                                  //! Copia pega 2
 void lanzar_proceso_telefono(const int indice_tabla);                                  //? Fijarse en comensales T3 y tratar de hacer una mezcla
-void lanzar_proceso_linea(const int indice_tabla);                                     //? Fijarse en comensales T3 y tratar de hacer una mezcla
-void esperar_procesos();                                                               //! Copia pega 2, total, no va a hacer falta
-void terminar_procesos(void);                                                          //! Copia pega 2
-void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); //! Copia pega 2
+void lanzar_proceso_linea(const int indice_tabla, const char *nombre_completo_buzon);  //? Fijarse en comensales T3 y tratar de hacer una mezcla
+void esperar_procesos();                                                               //! No va a hacer falta
+void terminar_procesos(void);                                                          //* Copia pega 2
+void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num); //* Copia pega 2
 void liberar_recursos();                                                               //? Fijarse en comensales T3 y tratar de hacer una mezcla
 
 int g_telefonosProcesses = 0;
@@ -29,7 +28,7 @@ struct TProcess_t *g_process_telefonos_table;
 struct TProcess_t *g_process_lineas_table;
 mqd_t qHandlerLlamadas;
 mqd_t qHandlerLineas[NUMLINEAS];
-
+struct mq_attr mqAttr;
 /*
 ▪ Inicializar las colas de mensajes necesarias para establecer la comunicación entre
   líneas y teléfonos, así como, la comunicación entre los teléfonos y cada una de las
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
   crear_procesos(NUMTELEFONOS, NUMLINEAS);
 
   // Esperamos a que finalicen las lineas
-  esperar_procesos();
+  esperar_procesos(); //! QUE NO HACE FALTA COÑO YA
 
   // Matamos los telefonos y cualquier otro proceso restante
   terminar_procesos();
@@ -100,7 +99,27 @@ int main(int argc, char *argv[])
 void crear_buzones()
 {
   // TODO
-  qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, NULL);
+  mqAttr.mq_maxmsg = (NUMLINEAS);
+  mqAttr.mq_msgsize = TAMANO_MENSAJES;
+  char caux[30], buffer[64];
+
+  // crear buzon llamadas de hasta 10 cajitas TODO CAMBIAR
+  qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr);
+
+  // pongo vacías las cajas:
+  for (int i = 0; i < NUMLINEAS; i++)
+  {
+    mq_send(qHandlerLlamadas, buffer, sizeof(buffer), 1);
+  }
+
+  // crear y poner vacíos los buzones lineas
+  mqAttr.mq_maxmsg = 1;
+  for (int i = 0; i < NUMLINEAS; i++)
+  {
+    sprintf(caux, "%s%d", BUZON_LINEAS, i);
+    qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr);
+    mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0);
+  }
 }
 
 void instalar_manejador_senhal()
@@ -141,6 +160,7 @@ void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea)
 
 void crear_procesos(int numTelefonos, int numLineas)
 {
+  char nombre_completo_buzon[30];
   int indice_tabla = 0;
   for (int i = 0; i < numTelefonos; i++)
   {
@@ -153,7 +173,8 @@ void crear_procesos(int numTelefonos, int numLineas)
 
   for (int i = 0; i < numLineas; i++)
   {
-    lanzar_proceso_linea(indice_tabla);
+    sprintf(nombre_completo_buzon, " %s %d", BUZON_LINEAS, indice_tabla);
+    lanzar_proceso_linea(indice_tabla, nombre_completo_buzon);
     indice_tabla++;
   }
   printf("[MANAGER] %d Lineas creadas.\n", indice_tabla);
@@ -161,6 +182,54 @@ void crear_procesos(int numTelefonos, int numLineas)
   sleep(1);
 }
 
+void lanzar_proceso_linea(const int indice_tabla, const char *nombre_completo_buzon)
+{
+  pid_t pid;
+
+  switch (pid = fork())
+  {
+  case -1:
+    fprintf(stderr, "[MANAGER] Error al lanzar proceso %s: %s.\n", CLASE_LINEA, strerror(errno));
+    terminar_procesos();
+    liberar_recursos();
+    exit(EXIT_FAILURE);
+  case 0:
+    if (execl(RUTA_LINEA, CLASE_LINEA, nombre_completo_buzon, NULL) == -1)
+    {
+      fprintf(stderr, "[MANAGER] Error usando execl() en el proceso %s: %s.\n", CLASE_LINEA, strerror(errno));
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  g_process_telefonos_table[indice_tabla].pid = pid;
+  g_process_telefonos_table[indice_tabla].clase = CLASE_LINEA;
+}
+
+void lanzar_proceso_telefono(const int indice_tabla)
+{
+  // execl(RUTA_TELEFONO, CLASE_TELEFONO, BUZON_LLAMADAS, NULL);
+  pid_t pid;
+
+  switch (pid = fork())
+  {
+  case -1:
+    fprintf(stderr, "[MANAGER] Error al lanzar proceso %s: %s.\n", CLASE_TELEFONO, strerror(errno));
+    terminar_procesos();
+    liberar_recursos();
+    exit(EXIT_FAILURE);
+  case 0:
+    if (execl(RUTA_TELEFONO, CLASE_TELEFONO, BUZON_LLAMADAS, NULL) == -1)
+    {
+      fprintf(stderr, "[MANAGER] Error usando execl() en el proceso %s: %s.\n", CLASE_TELEFONO, strerror(errno));
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  g_process_telefonos_table[indice_tabla].pid = pid;
+  g_process_telefonos_table[indice_tabla].clase = CLASE_TELEFONO;
+}
+
+//!! ESTE MÉTODO NO ES NECESARIO, PUESTO QUE NO ESPERO A QUE TERMINEN LOS PROCESOS, PUES NUNCA TERMINAN.
 void esperar_procesos()
 {
   int i, n_processes = g_lineasProcesses;
@@ -201,5 +270,24 @@ void terminar_procesos_especificos(struct TProcess_t *process_table, int process
         fprintf(stderr, "[MANAGER] Error al usar kill() en proceso %d: %s.\n", process_table[i].pid, strerror(errno));
       }
     }
+  }
+}
+
+void liberar_recursos()
+{
+  int i;
+  char caux[60];
+  for (i = 0; i < NUMTELEFONOS; i++)
+  {
+    sprintf(caux, " %s %d", BUZON_LLAMADAS, i);
+    mq_close(qHandlerLlamadas);
+    mq_unlink(BUZON_LLAMADAS);
+  }
+
+  for (i = 0; i < NUMLINEAS; i++)
+  {
+    sprintf(caux, " %s %d", BUZON_LINEAS, i);
+    mq_close(qHandlerLineas[i]);
+    mq_unlink(caux);
   }
 }

@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 {
 
     // Define variables locales
-    int pid = getpid();
+    int pid = (int)getpid();
     mqd_t qHandlerLlamadas;
     mqd_t qHandlerLinea;
     char buzonLinea[TAMANO_MENSAJES];
@@ -53,19 +53,23 @@ int main(int argc, char *argv[])
     }
     sprintf(buzonLinea, "%s", argv[1]);
 
-    // TODO
+    //Inicializar la línea
+    qHandlerLinea=mq_open(buzonLinea,O_RDWR);
+    qHandlerLlamadas=mq_open(BUZON_LLAMADAS,O_RDWR);
 
+    // TODO
     while (1)
     {
-        // Al inicializar la línea se realiza una espera de una llamada (simulación), que será entre 1 y 30 segundos
+        // Se realiza una espera de una llamada (simulación), que será entre 1 y 30 segundos
         printf("Linea [%d] esperando llamada...\n", pid);
         sleep(rand() % 30 + 1);
+
         // Termina la simulación con el rand(), envío mensaje
         printf("Linea [%d] recibida llamada ()...\n", pid);
-        mq_send(qHandlerLlamadas, buffer, sizeof(buffer), 0);
-        
+        mq_send(qHandlerLlamadas,buzonLinea,sizeof(buzonLinea),0);
+
         // Esperamos a que teléfono envíe un mensaje
-        mq_receive(qHandlerLinea, buzonLinea, sizeof(buzonLinea), 0);
+        mq_receive(qHandlerLinea, buffer, sizeof(buffer), 0);
     }
 
     return EXIT_SUCCESS;
