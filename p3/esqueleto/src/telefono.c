@@ -43,23 +43,23 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  mqd_t qHandlerLlamadas = mq_open(argv[1],O_RDWR);
+  mqd_t qHandlerLlamadas = mq_open(argv[1], O_RDWR);
   // TODO
 
   while (1)
   {
-    qHandlerLinea=mq_open(buzonLinea,O_RDWR);
     printf("Teléfono [%d] en espera...\n", pid);
     // mq_receive() SIEMPRE Y CUANDO HAYAN COSAS EN LLAMADA
     mq_receive(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), 0);
+    qHandlerLinea = mq_open(buzonLinea, O_RDWR);
     mq_send(qHandlerLinea, buffer, sizeof(buffer), 0);
-  // Teléfono [49728] en conversacion de llamada desde Linea: /buzon_linea_6
+    // Teléfono [49728] en conversacion de llamada desde Linea: /buzon_linea_6
     printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
     sleep(rand() % 10 + 10);
     // notificar fin de llamada
     printf("Teléfono [%d] ha %s la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
     // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
-    mq_close(buzonLinea);
+    mq_close(*buzonLinea);
   }
 
   return EXIT_SUCCESS;

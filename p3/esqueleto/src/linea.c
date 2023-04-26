@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
     }
     sprintf(buzonLinea, "%s", argv[1]);
 
-    //Inicializar la línea
-    qHandlerLinea=mq_open(buzonLinea,O_RDWR);
-    qHandlerLlamadas=mq_open(BUZON_LLAMADAS,O_RDWR);
+    // Inicializar la línea
+    qHandlerLinea = mq_open(buzonLinea, O_RDWR);
+    qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
 
     // TODO
     while (1)
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
         // Termina la simulación con el rand(), envío mensaje
         printf("Linea [%d] recibida llamada ()...\n", pid);
-        mq_send(qHandlerLlamadas,buzonLinea,sizeof(buzonLinea),0);
+        mq_send(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), 0);
 
         // Esperamos a que teléfono envíe un mensaje
         mq_receive(qHandlerLinea, buffer, sizeof(buffer), 0);
