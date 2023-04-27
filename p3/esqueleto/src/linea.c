@@ -52,25 +52,22 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     sprintf(buzonLinea, "%s", argv[1]);
-
+    // printf("%s\n", buzonLinea);
     // Inicializar la línea
-    qHandlerLinea = mq_open(buzonLinea, O_RDWR);
-    qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
 
     // TODO
     while (1)
     {
-        // Se realiza una espera de una llamada (simulación), que será entre 1 y 30 segundos
+        qHandlerLinea = mq_open(buzonLinea, O_RDWR);
         printf("Linea [%d] esperando llamada...\n", pid);
         sleep(rand() % 30 + 1);
-
-        // Termina la simulación con el rand(), envío mensaje
-        printf("Linea [%d] recibida llamada ()...\n", pid);
-        mq_send(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), 0);
-
-        // Esperamos a que teléfono envíe un mensaje
-        mq_receive(qHandlerLinea, buffer, sizeof(buffer), 0);
+        printf("Linea [%d] recibida llamada (%s)...\n", pid, buzonLinea);
+        qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
+        mq_send(qHandlerLlamadas, buzonLinea, strlen(buzonLinea), 0);
+        printf("Linea [%d] esperando fin de conversacion...\n",pid);
+        mq_receive(qHandlerLinea, buffer, strlen(buffer), NULL);
+        mq_close(qHandlerLlamadas);
+        mq_close(qHandlerLinea);
     }
-
     return EXIT_SUCCESS;
 }

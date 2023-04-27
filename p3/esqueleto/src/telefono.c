@@ -29,8 +29,6 @@ int main(int argc, char *argv[])
 
   // Define variables locales
   int pid = (int)getpid();
-  mqd_t qHandlerLinea;
-
   char buffer[TAMANO_MENSAJES + 1];
   char buzonLinea[TAMANO_MENSAJES];
 
@@ -49,18 +47,14 @@ int main(int argc, char *argv[])
   while (1)
   {
     printf("Teléfono [%d] en espera...\n", pid);
-    // mq_receive() SIEMPRE Y CUANDO HAYAN COSAS EN LLAMADA
-    mq_receive(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), 0);
-    qHandlerLinea = mq_open(buzonLinea, O_RDWR);
-    mq_send(qHandlerLinea, buffer, sizeof(buffer), 0);
-    // Teléfono [49728] en conversacion de llamada desde Linea: /buzon_linea_6
-    printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
+    mq_receive(qHandlerLlamadas, buzonLinea, strlen(buzonLinea), NULL);
+    printf("%s",buzonLinea);
+    mqd_t qHandlerLinea=mq_open(buzonLinea,O_RDWR);
+    printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n",pid,buzonLinea);
     sleep(rand() % 10 + 10);
-    // notificar fin de llamada
-    printf("Teléfono [%d] ha %s la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
-    // mq_send(buzones[restante]...¿qHandlerLinea?, msg);
-    mq_close(*buzonLinea);
+    mq_send(qHandlerLinea, buffer, strlen(buffer), 0);
+    printf("Teléfono [%d] ha colgado (%s) la llamada. %s\n",pid,FIN_CONVERSACION,buzonLinea);
+    mq_close(qHandlerLinea);
   }
-
   return EXIT_SUCCESS;
 }

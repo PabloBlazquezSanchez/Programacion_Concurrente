@@ -7,8 +7,8 @@
 #define RUTA_LINEA "./exec/linea"
 
 // Dispositivos
-#define NUMLINEAS 10    // /proc/sys/fs/mqueue/msg_max
-#define NUMTELEFONOS 3
+#define NUMLINEAS 3    // /proc/sys/fs/mqueue/msg_max
+#define NUMTELEFONOS 1
 
 // Colas Mensajes
 #define BUZON_LLAMADAS "/buzon_llamadas"
