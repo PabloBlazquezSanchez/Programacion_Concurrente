@@ -7,13 +7,13 @@
 #define RUTA_LINEA "./exec/linea"
 
 // Dispositivos
-#define NUMLINEAS 3    // /proc/sys/fs/mqueue/msg_max
-#define NUMTELEFONOS 1
+#define NUMLINEAS 10    // /proc/sys/fs/mqueue/msg_max
+#define NUMTELEFONOS 3
 
 // Colas Mensajes
 #define BUZON_LLAMADAS "/buzon_llamadas"
 #define BUZON_LINEAS   "/buzon_linea_"
-#define TAMANO_MENSAJES 64
+#define TAMANO_MENSAJES 15
 
 // Lineas
 #define FIN_CONVERSACION "Finalizado"

@@ -147,6 +147,7 @@ void crear_procesos(int numTelefonos, int numLineas)
     }
     printf("[MANAGER] %d Lineas creadas.\n", indice_tabla);
 
+    sleep(2);
     indice_tabla = 0;
 
     for (int i = 0; i < numTelefonos; i++)
@@ -155,8 +156,6 @@ void crear_procesos(int numTelefonos, int numLineas)
         indice_tabla++;
     }
     printf("[MANAGER] %d Telefonos creados.\n", indice_tabla);
-
-    sleep(1);
 }
 
 void lanzar_proceso_linea(const int indice_tabla)
@@ -196,7 +195,7 @@ void lanzar_proceso_telefono(const int indice_tabla)
         liberar_recursos();
         exit(EXIT_FAILURE);
     case 0:
-        if (execl(RUTA_TELEFONO, CLASE_TELEFONO, BUZON_LLAMADAS, NULL) == -1)
+        if (execl(RUTA_TELEFONO, CLASE_TELEFONO, NULL) == -1)
         {
             fprintf(stderr, "[MANAGER] Error usando execl() en el proceso %s: %s.\n", CLASE_TELEFONO, strerror(errno));
             exit(EXIT_FAILURE);
