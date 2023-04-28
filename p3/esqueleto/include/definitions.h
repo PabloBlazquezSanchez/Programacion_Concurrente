@@ -13,7 +13,7 @@
 // Colas Mensajes
 #define BUZON_LLAMADAS "/buzon_llamadas"
 #define BUZON_LINEAS   "/buzon_linea_"
-#define TAMANO_MENSAJES 15
+#define TAMANO_MENSAJES 64
 
 // Lineas
 #define FIN_CONVERSACION "Finalizado"

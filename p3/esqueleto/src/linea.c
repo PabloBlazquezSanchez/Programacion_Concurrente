@@ -15,13 +15,11 @@ int main(int argc, char *argv[])
     int pid = (int)getpid();
     mqd_t qHandlerLlamadas;
     mqd_t qHandlerLinea;
-    //char buzonLinea[TAMANO_MENSAJES];
+    char buzonLinea[TAMANO_MENSAJES];
     char buffer[TAMANO_MENSAJES + 1];
 
     // Inicia Random
     srand(pid);
-
-    // TODO
 
     // Verifica los parámetros
     if (argc != 2)
@@ -30,21 +28,26 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    char *buzonLinea = argv[1];
+    if (sscanf(argv[1], "%s", buzonLinea) == -1)
+    {
+        fprintf(stderr, "Error al obtener el nombre del buzón. %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
+    // sprintf(buzonLinea,"%s",argv[1]); //// O bien este
+    
+    qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
+    qHandlerLinea = mq_open(argv[1], O_RDWR);
+    
     while (1)
     {
-        qHandlerLinea = mq_open(argv[1], O_RDWR);
         printf("Linea [%d] esperando llamada...\n", pid);
         sleep(rand() % 30 + 1);
 
         printf("Linea [%d] recibida llamada (%s)...\n", pid, buzonLinea);
-        qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
-        mq_send(qHandlerLlamadas, buzonLinea, (int)strlen(buzonLinea), 0);
+        mq_send(qHandlerLlamadas, buzonLinea, 15, 0);
         printf("Linea [%d] esperando fin de conversacion...\n", pid);
-        mq_receive(qHandlerLinea, buffer, (int)strlen(buffer), NULL);
-        mq_close(qHandlerLlamadas);
-        mq_close(qHandlerLinea);
+        mq_receive(qHandlerLinea, buffer, TAMANO_MENSAJES+1, NULL);
     }
 
     return EXIT_SUCCESS;

@@ -48,10 +48,7 @@ int main(int argc, char *argv[])
     crear_procesos(NUMTELEFONOS, NUMLINEAS);
 
     // Esperamos a que finalicen las lineas
-    esperar_procesos();
-
-    // Matamos los telefonos y cualquier otro proceso restante
-    //terminar_procesos();
+    esperar_procesos(); //! no
 
     // Finalizamos Manager
     printf("\n[MANAGER] Terminacion del programa (todos los procesos terminados).\n");
@@ -65,8 +62,8 @@ void crear_buzones()
     int i;
     struct mq_attr mqAttr;
     mqAttr.mq_maxmsg = (NUMLINEAS);
-    mqAttr.mq_msgsize = TAMANO_MENSAJES;
-    char caux[30], buffer[64], numerobuzon[3];
+    mqAttr.mq_msgsize = 15;
+    char caux[24], buffer[64];
 
     // crear buzon llamadas de hasta 10 cajitas TODO CAMBIAR
     if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr)) == -1)
@@ -88,8 +85,7 @@ void crear_buzones()
 
     for (i = 0; i < NUMLINEAS; i++)
     {
-        sprintf(numerobuzon, "%d", i);
-        sprintf(caux, "%s%s", BUZON_LINEAS, numerobuzon);
+        sprintf(caux, "%s%d", BUZON_LINEAS, i);
         if ((qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr)) == -1)
         {
             fprintf(stderr, "Error al crear el buzón de llamadas\n");
