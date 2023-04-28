@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     crear_procesos(NUMTELEFONOS, NUMLINEAS);
 
     // Esperamos a que finalicen las lineas
-    esperar_procesos(); //! no
+    esperar_procesos();
 
     // Finalizamos Manager
     printf("\n[MANAGER] Terminacion del programa (todos los procesos terminados).\n");
