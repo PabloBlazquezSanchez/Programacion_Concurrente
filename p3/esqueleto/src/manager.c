@@ -60,13 +60,13 @@ int main(int argc, char *argv[])
 void crear_buzones()
 {
     int i;
-    struct mq_attr mqAttr;
-    mqAttr.mq_maxmsg = (NUMLINEAS);
-    mqAttr.mq_msgsize = 15;
-    char caux[24], buffer[64];
+    struct mq_attr mqAttrA, mqAttrB;
+    mqAttrA.mq_maxmsg = NUMLINEAS;
+    mqAttrA.mq_msgsize = TAMANO_MENSAJES;
+    char caux[TAMANO_MENSAJES];
 
     // crear buzon llamadas de hasta 10 cajitas TODO CAMBIAR
-    if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr)) == -1)
+    if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrA)) == -1)
     {
         fprintf(stderr, "Error al crear el buzón de llamadas\n");
         liberar_recursos();
@@ -74,25 +74,25 @@ void crear_buzones()
     }
 
     // pongo vacías las cajas:
-    for (i = 0; i < NUMLINEAS; i++)
-    {
-        mq_send(qHandlerLlamadas, buffer, sizeof(buffer), 1);
-    }
+    // for (i = 0; i < NUMLINEAS; i++)
+    // {
+    //     mq_send(qHandlerLlamadas, buffer, sizeof(buffer), 1);
+    // }
 
     // crear y poner vacíos los buzones lineas
-    mqAttr.mq_maxmsg = 1;
-    mqAttr.mq_msgsize = TAMANO_MENSAJES + 1;
+    mqAttrB.mq_maxmsg = 1;
+    mqAttrB.mq_msgsize = TAMANO_MENSAJES;
 
     for (i = 0; i < NUMLINEAS; i++)
     {
         sprintf(caux, "%s%d", BUZON_LINEAS, i);
-        if ((qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttr)) == -1)
+        if ((qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrB)) == -1)
         {
             fprintf(stderr, "Error al crear el buzón de llamadas\n");
             liberar_recursos();
             exit(EXIT_FAILURE);
         }
-        mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0);
+        //mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0); //?
     }
 }
 
@@ -157,7 +157,7 @@ void crear_procesos(int numTelefonos, int numLineas)
 void lanzar_proceso_linea(const int indice_tabla)
 {
     pid_t pid;
-    char nombre_completo_buzon[24];
+    char nombre_completo_buzon[TAMANO_MENSAJES];
     sprintf(nombre_completo_buzon, "%s%d", BUZON_LINEAS, indice_tabla);
 
     switch (pid = fork())

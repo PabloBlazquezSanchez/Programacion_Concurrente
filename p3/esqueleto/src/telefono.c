@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     int pid = (int)getpid();
     // TODO
     char buzonLinea[TAMANO_MENSAJES];
-    char buffer[TAMANO_MENSAJES + 1];
+    char buffer[TAMANO_MENSAJES];
 
     srand(pid);
 
@@ -24,14 +24,15 @@ int main(int argc, char *argv[])
     while (1)
     {
         printf("Teléfono [%d] en espera...\n", pid);
-        mq_receive(qHandlerLlamadas, buzonLinea, 15, NULL);
+        mq_receive(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), NULL);
 
         printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
 
         sleep(rand() % 10 + 10);
         mqd_t qHandlerLinea = mq_open(buzonLinea, O_RDWR);
-        mq_send(qHandlerLinea, buffer, TAMANO_MENSAJES+1, 0);
-        printf("Teléfono [%d] ha colgado (%s) la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
+        printf("Teléfono [%d] ha %s la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
+        sprintf(buffer, "%d", pid);
+        mq_send(qHandlerLinea, buffer, sizeof(buffer), 0);
         mq_close(qHandlerLinea);
     }
 

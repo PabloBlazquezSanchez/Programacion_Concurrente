@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     mqd_t qHandlerLlamadas;
     mqd_t qHandlerLinea;
     char buzonLinea[TAMANO_MENSAJES];
-    char buffer[TAMANO_MENSAJES + 1];
+    char buffer[TAMANO_MENSAJES];
 
     // Inicia Random
     srand(pid);
@@ -34,20 +34,21 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    // sprintf(buzonLinea,"%s",argv[1]); //// O bien este
-    
+    // sprintf(buzonLinea, "%s", argv[1]); //// O bien este
+
     qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
-    qHandlerLinea = mq_open(argv[1], O_RDWR);
-    
+    qHandlerLinea = mq_open(buzonLinea, O_RDWR);
+
     while (1)
     {
         printf("Linea [%d] esperando llamada...\n", pid);
         sleep(rand() % 30 + 1);
 
         printf("Linea [%d] recibida llamada (%s)...\n", pid, buzonLinea);
-        mq_send(qHandlerLlamadas, buzonLinea, 15, 0);
+        mq_send(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), 0);
         printf("Linea [%d] esperando fin de conversacion...\n", pid);
-        mq_receive(qHandlerLinea, buffer, TAMANO_MENSAJES+1, NULL);
+        mq_receive(qHandlerLinea, buffer, sizeof(buffer), NULL);
+        printf("Linea [%d] me ha colgado la llamada (%s) el teléfono %s\n", pid, buzonLinea, buffer);
     }
 
     return EXIT_SUCCESS;
