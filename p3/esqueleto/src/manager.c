@@ -204,23 +204,9 @@ void lanzar_proceso_telefono(const int indice_tabla)
 
 void esperar_procesos()
 {
-    int i, n_processes = g_lineasProcesses;
-    pid_t pid;
-
-    while (n_processes > 0)
-    {
-        pid = wait(NULL);
-        for (i = 0; i < g_lineasProcesses; i++)
-        {
-            if (pid == g_process_lineas_table[i].pid)
-            {
-                printf("[MANAGER] Proceso LINEA terminado [%d]...\n", g_process_lineas_table[i].pid);
-                g_process_lineas_table[i].pid = 0;
-                n_processes--;
-                break;
-            }
-        }
-    }
+    int i;
+    for (i = 0; i < NUMLINEAS; i++)
+        waitpid(g_process_lineas_table[i].pid, 0, 0);
 }
 
 void terminar_procesos()
