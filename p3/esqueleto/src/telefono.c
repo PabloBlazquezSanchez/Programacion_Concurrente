@@ -13,10 +13,11 @@ int main(int argc, char *argv[])
 
     // Define variables locales
     int pid = (int)getpid();
-    // TODO
     char buzonLinea[TAMANO_MENSAJES];
     char buffer[TAMANO_MENSAJES];
 
+    // Inicia Random
+    //Establecimiento semilla de generación de números aleatorio (con id de proceso)
     srand(pid);
 
     mqd_t qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
@@ -33,10 +34,15 @@ int main(int argc, char *argv[])
         printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
 
         sleep(rand() % 10 + 10);
+        //Abrimos una cola de menaje de seguimiento de la linea
         mqd_t qHandlerLinea = mq_open(buzonLinea, O_RDWR);
+
+        //Mensaje de finalización de buzón y envío de mensaje a la línea
         printf("Teléfono [%d] ha %s la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
         sprintf(buffer, "%d", pid);
         mq_send(qHandlerLinea, buffer, sizeof(buffer), 0);
+
+        //Cerramos la cola de mensajes creada anteriormente
         mq_close(qHandlerLinea);
     }
 
