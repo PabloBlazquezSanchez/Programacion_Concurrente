@@ -21,11 +21,15 @@ int main(int argc, char *argv[])
 
     mqd_t qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_RDWR);
 
-    while (1)
+    while (1) //El teléfono está siempre en ejecución, hasta que el manager fuerce su finalización
     {
+        //Mensaje de espera
         printf("Teléfono [%d] en espera...\n", pid);
+
+        //Recibimos un mensaje proveniente de un buzón
         mq_receive(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), NULL);
 
+        //Simulación de la conversación de entre 10 y 20 segundos
         printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
 
         sleep(rand() % 10 + 10);
