@@ -92,10 +92,14 @@ void crear_buzones()
             liberar_recursos();
             exit(EXIT_FAILURE);
         }
-        //mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0); //?
+        // mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0); //?
     }
 }
 
+/*
+ * Instala el manejador de la señal de interrupción, para que el
+ * programa tenga un comportamiento determinado cuando llegue una.
+ */
 void instalar_manejador_senhal()
 {
     if (signal(SIGINT, manejador_senhal) == SIG_ERR)
@@ -105,6 +109,11 @@ void instalar_manejador_senhal()
     }
 }
 
+/*
+ * Cuando llegue una señal de interrupción, el manejador hará por defecto
+ * una terminación el programa, matando los procesos hijos creados,
+ * liberando recursos y finalizando el principal, con éxito.
+ */
 void manejador_senhal(int sign)
 {
     printf("\n[MANAGER] Terminacion del programa (Ctrl + C).\n");
@@ -113,6 +122,12 @@ void manejador_senhal(int sign)
     exit(EXIT_SUCCESS);
 }
 
+/*
+ * En este método se creará e inicializará dos tablas de procesos,
+ * una para teléfonos y otra para líneas.
+ *  -El total de procesos que tendrá la tabla de teléfonos será el número de teléfonos introducido en la linea de comandos.
+ *  -El total de procesos que tendrá la tabla de lineas será el número de lineas introducido en la linea de comandos.
+ */
 void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea)
 {
     g_telefonosProcesses = n_procesos_telefono;
@@ -132,6 +147,10 @@ void iniciar_tabla_procesos(int n_procesos_telefono, int n_procesos_linea)
     }
 }
 
+/*
+ * Desde este método se gestionará el arranque de los diferentes procesos.
+ * Primero se inician los procesos linea y luego se inician los procesos telefono.
+ */
 void crear_procesos(int numTelefonos, int numLineas)
 {
     int indice_tabla = 0;
@@ -154,6 +173,12 @@ void crear_procesos(int numTelefonos, int numLineas)
     printf("[MANAGER] %d Telefonos creados.\n", indice_tabla);
 }
 
+/*
+ * Para lanzar el proceso linea requerimos del inidice de tabla que posteriormente vamos a usar para guardar 
+ * el pid y la clase.
+ * Creamos un subproceso con fork, el pid resultante (si no hay error) se guarda en la tabla de procesos con 
+ * el indice de tabla, pasado también a la función, junto con el tipo de proceso (CLASE).
+*/
 void lanzar_proceso_linea(const int indice_tabla)
 {
     pid_t pid;
@@ -163,7 +188,7 @@ void lanzar_proceso_linea(const int indice_tabla)
     switch (pid = fork())
     {
     case -1:
-        fprintf(stderr, "[MANAGER] Error al lanzar proceso telefono: %s.\n", strerror(errno));
+        fprintf(stderr, "[MANAGER] Error al lanzar proceso linea: %s.\n", strerror(errno));
         terminar_procesos();
         liberar_recursos();
         exit(EXIT_FAILURE);
@@ -179,6 +204,9 @@ void lanzar_proceso_linea(const int indice_tabla)
     g_process_lineas_table[indice_tabla].clase = CLASE_LINEA;
 }
 
+/*
+ * Funciona de la misma manera que el método lanzar_proceso_linea.
+*/
 void lanzar_proceso_telefono(const int indice_tabla)
 {
     pid_t pid;
@@ -202,6 +230,10 @@ void lanzar_proceso_telefono(const int indice_tabla)
     g_process_telefonos_table[indice_tabla].clase = CLASE_TELEFONO;
 }
 
+/*
+ * Para que manager (proceso principal) espere a procesos hijos, vamos a contar el número de
+ * lineas restantes con NUMLINEAS. Mientras que queden procesos, hacemos un wait de cualquier linea.
+ */
 void esperar_procesos()
 {
     int i;
@@ -209,6 +241,11 @@ void esperar_procesos()
         waitpid(g_process_lineas_table[i].pid, 0, 0);
 }
 
+/*
+ * Este método presenta una función muy simple, va a llamar al método
+ * terminar_procesos_especificos para finalizar por separado las lineas y los telefonos
+ * en ese respectivo orden.
+ */
 void terminar_procesos()
 {
     printf("\n----- [MANAGER] Terminar con cualquier proceso pendiente ejecutándose -----\n");
@@ -216,6 +253,11 @@ void terminar_procesos()
     terminar_procesos_especificos(g_process_telefonos_table, g_telefonosProcesses);
 }
 
+/*
+ * Para finializar los procesos de una tabla debemos recorrer dicha tabla e ir comprobando si el pid de un proceso
+ * es distinto de 0. En caso afirmativo procedemos a matar al proceso. Si al matarlo devuelve -1 imprime error al usar
+ * la función kill().
+ */
 void terminar_procesos_especificos(struct TProcess_t *process_table, int process_num)
 {
     for (int i = 0; i < process_num; i++)
@@ -231,6 +273,11 @@ void terminar_procesos_especificos(struct TProcess_t *process_table, int process
     }
 }
 
+/*
+ * Una vez se han terminado los procesos, primero vamos a liberar las tablas de procesos linea y teledono.
+ * Tras esto, vamos a cerrar y desvincular el buzón de llamadas y luego vamos a hacer lo mismo con los buzones
+ * linea.
+ */
 void liberar_recursos()
 {
     int i;
