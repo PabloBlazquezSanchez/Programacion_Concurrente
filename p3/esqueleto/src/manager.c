@@ -71,7 +71,6 @@ void crear_buzones()
     mqAttrA.mq_msgsize = TAMANO_MENSAJES; //Limitamos el tamaño máximo de los mensajes a TAMANO_MENSAJES
     char caux[TAMANO_MENSAJES]; //Cadena de caracteres con un tamaño correspondiente a TAMANO_MENSAJES
 
-    // crear buzon llamadas de hasta 10 cajitas TODO CAMBIAR
     //Creamos un buzón de llamadas de hasta 10 mensajes de tamaño 64 bytes
     if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrA)) == -1) //Si no se crea correctamente el buzón de llamadas
     {
@@ -80,7 +79,6 @@ void crear_buzones()
         exit(EXIT_FAILURE);
     }
 
-    // crear y poner vacíos los buzones lineas
     mqAttrB.mq_maxmsg = 1; //Limitamos el número máximo de mensajes a 0
     mqAttrB.mq_msgsize = TAMANO_MENSAJES; //Limitamos el tamaño máximo de los mensajes a TAMANO_MENSAJES
 
