@@ -57,42 +57,43 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
+
+/*
+ * En este método se van a abrir las colas de mensaje que se emplearán para la ejecución y el funionamiento del programa.
+ * Primero se abre la cola de mensaje para las llamadas y se comprueba que se han abierto bien y luego se abren la cola 
+ * para los buzones línea y se realiza la misma comprobación.
+*/
 void crear_buzones()
 {
-    int i;
-    struct mq_attr mqAttrA, mqAttrB;
-    mqAttrA.mq_maxmsg = NUMLINEAS;
-    mqAttrA.mq_msgsize = TAMANO_MENSAJES;
-    char caux[TAMANO_MENSAJES];
+    int i; //Variable entera para iterar la cola de mensaje
+    struct mq_attr mqAttrA, mqAttrB; //Estructuras de atributos para las colas de mensajes
+    mqAttrA.mq_maxmsg = NUMLINEAS; //Limitamos el número máximo de mensajes a NUMLINEAS, que equivale a 10
+    mqAttrA.mq_msgsize = TAMANO_MENSAJES; //Limitamos el tamaño máximo de los mensajes a TAMANO_MENSAJES
+    char caux[TAMANO_MENSAJES]; //Cadena de caracteres con un tamaño correspondiente a TAMANO_MENSAJES
 
     // crear buzon llamadas de hasta 10 cajitas TODO CAMBIAR
-    if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrA)) == -1)
+    //Creamos un buzón de llamadas de hasta 10 mensajes de tamaño 64 bytes
+    if ((qHandlerLlamadas = mq_open(BUZON_LLAMADAS, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrA)) == -1) //Si no se crea correctamente el buzón de llamadas
     {
         fprintf(stderr, "Error al crear el buzón de llamadas\n");
         liberar_recursos();
         exit(EXIT_FAILURE);
     }
 
-    // pongo vacías las cajas:
-    // for (i = 0; i < NUMLINEAS; i++)
-    // {
-    //     mq_send(qHandlerLlamadas, buffer, sizeof(buffer), 1);
-    // }
-
     // crear y poner vacíos los buzones lineas
-    mqAttrB.mq_maxmsg = 1;
-    mqAttrB.mq_msgsize = TAMANO_MENSAJES;
+    mqAttrB.mq_maxmsg = 1; //Limitamos el número máximo de mensajes a 0
+    mqAttrB.mq_msgsize = TAMANO_MENSAJES; //Limitamos el tamaño máximo de los mensajes a TAMANO_MENSAJES
 
-    for (i = 0; i < NUMLINEAS; i++)
+    //Cada buzón de línea contendrá un mensaje de 64 bytes
+    for (i = 0; i < NUMLINEAS; i++) //Iteramos la cola de mensajes para líneas
     {
         sprintf(caux, "%s%d", BUZON_LINEAS, i);
-        if ((qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrB)) == -1)
+        if ((qHandlerLineas[i] = mq_open(caux, O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR, &mqAttrB)) == -1) //Si no se crea correctamente el buzón de líneas
         {
             fprintf(stderr, "Error al crear el buzón de llamadas\n");
             liberar_recursos();
             exit(EXIT_FAILURE);
         }
-        // mq_send(qHandlerLineas[i], buffer, sizeof(buffer), 0); //?
     }
 }
 
