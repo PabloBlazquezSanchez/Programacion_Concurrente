@@ -50,8 +50,6 @@ int main(int argc, char *argv[])
 
         //Línea espera fin de conversación del teléfono
         printf("Linea [%d] esperando fin de conversacion...\n", pid);
-
-        //Linea espera al teléfono
         mq_receive(qHandlerLinea, buffer, sizeof(buffer), NULL);
 
         //Línea recibe de teléfono fin de teléfono

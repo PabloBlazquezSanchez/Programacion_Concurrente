@@ -26,19 +26,17 @@ int main(int argc, char *argv[])
     {
         //Mensaje de espera a una llamada
         printf("Teléfono [%d] en espera...\n", pid);
-
-        //Recibimos un mensaje proveniente de un buzón de la línea a atender
+        //Espera a recibir un mensaje proveniente de un buzón de la línea a atender
         mq_receive(qHandlerLlamadas, buzonLinea, sizeof(buzonLinea), NULL);
 
         //Simulación de la conversación de entre 10 y 20 segundos
         printf("Teléfono [%d] en conversacion de llamada desde Linea: %s\n", pid, buzonLinea);
-
         sleep(rand() % 10 + 10);
-        //Abrimos una cola de mensaje de la linea atendida
-        mqd_t qHandlerLinea = mq_open(buzonLinea, O_RDWR);
 
         //Mensaje de finalización del teléfono usado y envío de mensaje a la línea
         printf("Teléfono [%d] ha %s la llamada. %s\n", pid, FIN_CONVERSACION, buzonLinea);
+        //Abrimos una cola de mensaje de la linea atendida
+        mqd_t qHandlerLinea = mq_open(buzonLinea, O_RDWR);
         sprintf(buffer, "%d", pid);
         mq_send(qHandlerLinea, buffer, sizeof(buffer), 0);
 
